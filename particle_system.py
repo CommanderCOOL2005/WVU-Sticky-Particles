@@ -44,7 +44,7 @@ class ParticleSystem:
     #     return (-potential_bounds, potential_bounds)
 
     def plot_ghost_state(self):
-        check_calibration()
+        self.check_calibration()
         fig, ax = plt.subplots()
         ax.set(
             xlim=(-5,5),
