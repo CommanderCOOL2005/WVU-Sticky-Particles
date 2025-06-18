@@ -1,5 +1,5 @@
 import math
-from test import Particle
+from particle import Particle
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
