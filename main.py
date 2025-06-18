@@ -10,7 +10,7 @@
 # User inputs the array of tuples in ascending order of y.
 
 import math
-from particle import *
+from test import *
 from particle_system import *
 import random as r
 
