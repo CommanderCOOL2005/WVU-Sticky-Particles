@@ -15,6 +15,7 @@ import math
 from particle import *
 from particle_system import *
 import random as r
+from plotter import *
 
 system = ParticleSystem()
 for i in range(20):

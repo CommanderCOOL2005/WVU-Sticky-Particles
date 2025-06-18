@@ -32,6 +32,7 @@ class ParticleSystem:
                     acceleration += self.particles[j].mass
             self.particles[i].acceleration = acceleration
         self.calibrated = True
+
     def check_calibration(self):
         if not self.calibrated:
             print("WARNING: Particle system is not calibrated. Calibrate if this was not your intention")

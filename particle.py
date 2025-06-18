@@ -26,5 +26,6 @@ class Particle:
         if isinstance(other, Particle):
             return math.sqrt((other.position - self.position) * (self.mass + other.mass))
         raise TypeError("Can only compute difference with another Particle instance.")
+    
     def evaluate_ghost_state(self, time):
         return self.position + self.velocity * time + 0.5 * self.acceleration * time * time
