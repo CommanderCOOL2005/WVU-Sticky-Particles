@@ -19,7 +19,7 @@ for i in range(20):
     particle = Particle(r.uniform(0.5,1), r.uniform(-1,1), r.uniform(-1,1))
     system.add_particle(particle)
 system.calibrate()
-system.plot_ghost_state()
+plot_ghost_state(system)
 
 # particles_input = input("Enter particles as (m_i, y_i) tuples in ascending order of y: ")
 # # Ensure the input is a valid list of tuples
