@@ -1,12 +1,14 @@
 import math 
 
 class Particle:
-    def __init__(self, mass, position):
+    def __init__(self, mass, position, velocity=0, acceleration=0):
         self.mass = mass
         self.position = position
+        self.velocity = velocity
+        self.acceleration = acceleration
 
     def __repr__(self):
-        return f"Particle(m={self.mass}, y={self.position})"
+        return f"Particle(m={self.mass}, y={self.position}, v={self.velocity}, a={self.acceleration})"
     
     def __add__(self, other):
         if isinstance(other, Particle):
@@ -24,3 +26,5 @@ class Particle:
         if isinstance(other, Particle):
             return math.sqrt((other.position - self.position) * (self.mass + other.mass))
         raise TypeError("Can only compute difference with another Particle instance.")
+    def evaluate_ghost_state(self, time):
+        return self.position + self.velocity*time + 0.5 * self.acceleration * time * time

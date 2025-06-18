@@ -10,31 +10,41 @@
 # User inputs the array of tuples in ascending order of y.
 
 import math
-from typing import List, Tuple
-from Particle import *
-from Particles import *
+from particle import *
+from particle_system import *
+import random as r
 
-particles_input = input("Enter particles as (m_i, y_i) tuples in ascending order of y: ")
-# Ensure the input is a valid list of tuples
-try:
-    particles_input = eval(particles_input)
-except (SyntaxError, NameError):
-    raise ValueError("Invalid input format. Please enter a list of tuples in the form [(m1, y1), (m2, y2), ...].")
-# Validate that the input is a list of tuples
-if not isinstance(particles_input, list) or not all(isinstance(p, tuple) and len(p) == 2 for p in particles_input):
-    raise ValueError("Input must be a list of tuples in the form [(m1, y1), (m2, y2), ...].")
-# Validate that the masses are positive and positions are numeric
-for m, y in particles_input:
-    if not isinstance(m, (int, float)) or not isinstance(y, (int, float)):
-        raise ValueError("Each particle must be a tuple of (mass, position) with numeric values.")
-    if m <= 0:
-        raise ValueError("Mass must be positive.")
-# Ensure that the particles are in ascending order of y
-def is_ascending_order(particles):
-    return all(particles[i][1] < particles[i + 1][1] for i in range(len(particles) - 1))
-if not is_ascending_order(particles_input):
-    raise ValueError("Particles must be in ascending order of y.")
+system = ParticleSystem()
+for i in range(200):
+    particle = Particle(r.uniform(0.5,1), r.uniform(-1,1), r.uniform(-1,1))
+    system.add_particle(particle)
+system.calibrate()
+print(system.get_total_mass())
+print([p.mass for p in system.particles])
+print([p.acceleration for p in system.particles])
+system.plot_ghost_state()
 
-#interpret particles as array of Particle objects
-def interpret_particles(particles: List[Tuple[float, float]]) -> List['Particle']:
-    return [Particle(m, y) for m, y in particles]
+# particles_input = input("Enter particles as (m_i, y_i) tuples in ascending order of y: ")
+# # Ensure the input is a valid list of tuples
+# try:
+#     particles_input = eval(particles_input)
+# except (SyntaxError, NameError):
+#     raise ValueError("Invalid input format. Please enter a list of tuples in the form [(m1, y1), (m2, y2), ...].")
+# # Validate that the input is a list of tuples
+# if not isinstance(particles_input, list) or not all(isinstance(p, tuple) and len(p) == 2 for p in particles_input):
+#     raise ValueError("Input must be a list of tuples in the form [(m1, y1), (m2, y2), ...].")
+# # Validate that the masses are positive and positions are numeric
+# for m, y in particles_input:
+#     if not isinstance(m, (int, float)) or not isinstance(y, (int, float)):
+#         raise ValueError("Each particle must be a tuple of (mass, position) with numeric values.")
+#     if m <= 0:
+#         raise ValueError("Mass must be positive.")
+# # Ensure that the particles are in ascending order of y
+# def is_ascending_order(particles):
+#     return all(particles[i][1] < particles[i + 1][1] for i in range(len(particles) - 1))
+# if not is_ascending_order(particles_input):
+#     raise ValueError("Particles must be in ascending order of y.")
+
+# #interpret particles as array of Particle objects
+# def interpret_particles(particles: List[Tuple[float, float]]) -> List['Particle']:
+#     return [Particle(m, y) for m, y in particles]
