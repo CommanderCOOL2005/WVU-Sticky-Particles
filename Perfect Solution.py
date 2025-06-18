@@ -39,28 +39,28 @@ def interpret_particles(particles: List[Tuple[float, float]]) -> List['Particle'
 
 
 class Particle:
-    def __init__(self, m, y):
-        self.m = m
-        self.y = y
+    def __init__(self, mass, position):
+        self.mass = mass
+        self.position = position
 
     def __repr__(self):
-        return f"Particle(m={self.m}, y={self.y})"
+        return f"Particle(m={self.mass}, y={self.position})"
     
     def __add__(self, other):
         if isinstance(other, Particle):
-            return Particle(self.m + other.m, (self.m * self.y + other.m * other.y) / (self.m + other.m))
+            return Particle(self.mass + other.mass, (self.mass * self.position + other.mass * other.position) / (self.mass + other.mass))
         raise TypeError("Can only add another Particle instance.")
     
     # time of perfect collision
     def perfect_time(self, other):
         if isinstance(other, Particle):
-            return 2 * math.sqrt((other.y - self.y) / (self.m + other.m))
+            return 2 * math.sqrt((other.position - self.position) / (self.mass + other.mass))
         raise TypeError("Can only compute time with another Particle instance.")
     
     # velocity difference, v1 - v2, needed for perfect solution.
     def perfect_difference(self, other):
         if isinstance(other, Particle):
-            return math.sqrt((other.y - self.y) * (self.m + other.m))
+            return math.sqrt((other.position - self.position) * (self.mass + other.mass))
         raise TypeError("Can only compute difference with another Particle instance.")
 
 class Particles:
@@ -69,7 +69,7 @@ class Particles:
         self.rel_vel = rel_vel  # relative velocity of the system
 
     def center(self):
-        return sum(p.m * p.y for p in self.particles) / sum(p.m for p in self.particles)
+        return sum(p.mass * p.position for p in self.particles) / sum(p.mass for p in self.particles)
 
     # Find the time of the next perfect collision in the system.
     # Each collision gives us the following information:
@@ -93,5 +93,4 @@ class Particles:
             return [0]
         elif len(self.particles) == 2:
             p1, p2 = self.particles
-            return [math.sqrt((p2.y - p1.y)(p1.m + p2.m)) + self.rel_vel, self.rel_vel]
-        else:
+            return [math.sqrt((p2.position - p1.position)(p1.mass + p2.mass)) + self.rel_vel, self.rel_vel]
