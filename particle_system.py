@@ -27,9 +27,9 @@ class ParticleSystem:
                 if i == j:
                     continue
                 if i < j:
-                    acceleration += self.particles[j].mass
-                else:
                     acceleration -= self.particles[j].mass
+                else:
+                    acceleration += self.particles[j].mass
             self.particles[i].acceleration = acceleration
         self.calibrated = True
     def check_calibration(self):
