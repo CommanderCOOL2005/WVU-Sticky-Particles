@@ -15,13 +15,10 @@ from particle_system import *
 import random as r
 
 system = ParticleSystem()
-for i in range(200):
-    particle = Particle(r.uniform(0.5,1), r.uniform(-1,1), r.uniform(-10,10))
+for i in range(20):
+    particle = Particle(r.uniform(0.5,1), r.uniform(-1,1), r.uniform(-1,1))
     system.add_particle(particle)
 system.calibrate()
-print(system.get_total_mass())
-print([p.mass for p in system.particles])
-print([p.acceleration for p in system.particles])
 system.plot_ghost_state()
 
 # particles_input = input("Enter particles as (m_i, y_i) tuples in ascending order of y: ")

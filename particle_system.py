@@ -38,16 +38,18 @@ class ParticleSystem:
     def check_calibration(self):
         if not self.calibrated:
             print("WARNING: Particle system is not calibrated. Calibrate if this was not your intention")
-    # def get_goofy_ahh_bounds(self): (MAYBE DO THIS LATER LIKE BRUH)
-    #     potential_bounds = max([abs(-p.velocity/p.acceleration) for p in self.particles])
-    #     potential_bounds *= 1.2
-    #     return (-potential_bounds, potential_bounds)
+    def get_x_bounds(self): 
+        candidates = [abs(-p.velocity/p.acceleration) for p in self.particles]
+        greatest_y_bound = max(candidates)
+        index = candidates.index(greatest_y_bound)
+        bound = self.particles[index].evaluate_ghost_state(greatest_y_bound)
+        return (-bound, bound)
 
     def plot_ghost_state(self):
         self.check_calibration()
         fig, ax = plt.subplots()
         ax.set(
-            xlim=(-5,5),
+            xlim=(self.get_x_bounds()),
             ylim=(0,5), 
             xlabel=r'Position')
 
@@ -55,7 +57,7 @@ class ParticleSystem:
             y = np.linspace(0,10,100)
             x = [self.particles[i].evaluate_ghost_state(time) for time in y]
 
-            ax.plot(x,y, color=matplotlib.colors.hsv_to_rgb((i/len(self.particles),1,1)))
+            ax.plot(x,y, color=matplotlib.colors.hsv_to_rgb((i/len(self.particles),1,1)), lw=0.5)
         plt.show()
 
     # Find the time of the next perfect collision in the system.
