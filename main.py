@@ -16,7 +16,7 @@ import random as r
 
 system = ParticleSystem()
 for i in range(200):
-    particle = Particle(r.uniform(0.5,1), r.uniform(-1,1), r.uniform(-1,1))
+    particle = Particle(r.uniform(0.5,1), r.uniform(-1,1), r.uniform(-10,10))
     system.add_particle(particle)
 system.calibrate()
 print(system.get_total_mass())
