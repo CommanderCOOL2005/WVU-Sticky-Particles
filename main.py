@@ -1,3 +1,5 @@
+from plotter import *
+
 # Given an array of particles, (m_i, y_i),
 # where m is the mass and the y is the position,
 # find the perfect solution for the repulsive pressureless Euler-Poisson system.
