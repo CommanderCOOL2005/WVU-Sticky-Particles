@@ -1,0 +1,1 @@
+This code finds a perfect solution to a repulsive pressureless Euler-Poission system given an input of an array of (mass, position). It returns an array of velocities. A perfect solution is that where all collisions are glancing, and the total momentum is 0. A glancing collision is one where both particles have the same velocity at collision.
