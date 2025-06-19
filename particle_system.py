@@ -70,4 +70,3 @@ class ParticleSystem:
             merged_system = ParticleSystem(self.particles[:k] + [ghost] + self.particles[k+2:])
             merged_solution = merged_system.perfect_solution()
             return merged_solution[:k] + [merged_solution[k] + (p2.mass * dif)/(ghost.mass), merged_solution[k] - (p1.mass * dif)/(ghost.mass)] + merged_solution[k+1:]
-
