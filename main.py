@@ -69,4 +69,3 @@ particles_with_velocities = [
 
 # Create system and plot evolution
 system_with_velocities = ParticleSystem(particles_with_velocities)
-plot_system_evolution(system_with_velocities, max_time=5.0)
