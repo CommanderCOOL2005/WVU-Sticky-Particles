@@ -2,8 +2,11 @@ import math
 from particle import Particle
 
 class ParticleSystem:
-    def __init__(self, particles: list[Particle] = [], relative_velocity=0):
-        self.particles = particles
+    def __init__(self, particles: list[Particle] = None, relative_velocity=0):
+        if particles is None:
+            self.particles = []
+        else:
+            self.particles = list(particles)
         self.calibrated = False
         self.rel_vel = relative_velocity  # relative velocity of the system
 
@@ -48,7 +51,7 @@ class ParticleSystem:
             time = self.particles[i].perfect_time(self.particles[i+1])
             if time < min_time:
                 min_time = time
-                pair = (self.particles[i], self.particles[i+1])
+                ghost = self.particles[i] + self.particles[i+1]
                 k = i
         return min_time, pair, k
     
@@ -59,4 +62,12 @@ class ParticleSystem:
             return [0]
         elif len(self.particles) == 2:
             p1, p2 = self.particles
-            return [math.sqrt((p2.position - p1.position)(p1.mass + p2.mass)) + self.rel_vel, self.rel_vel]
+            return [p2.mass * math.sqrt((p2.position - p1.position)/(p1.mass + p2.mass)), (-1) * (p1.mass) * math.sqrt((p2.position - p1.position)/(p1.mass + p2.mass))]
+        else:
+            min_time, ghost, k = self.next_collision()
+            p1, p2 = self.particles[k], self.particles[k+1]
+            dif = p1.perfectdifference(p2)
+            merged_system = ParticleSystem(self.particles[:k] + [ghost] + self.particles[k+2:])
+            merged_solution = merged_system.perfect_solution()
+            return merged_solution[:k] + [merged_solution[k] + (p2.mass * dif)/(ghost.mass), merged_solution[k] - (p1.mass * dif)/(ghost.mass)] + merged_solution[k+1:]
+
