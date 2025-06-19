@@ -1,5 +1,8 @@
 import math
 from particle import Particle
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
 
 class ParticleSystem:
     def __init__(self, particles: list[Particle] = None, relative_velocity=0):

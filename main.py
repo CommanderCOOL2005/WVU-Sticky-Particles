@@ -55,3 +55,18 @@ input = [
 
 system = ParticleSystem(input)
 print("Solution:" + str(system.perfect_solution()))
+
+# Example: Create a system with particles that have initial velocities
+print("\nDemonstrating particle system evolution with collisions:")
+
+# Create particles with positions and velocities
+particles_with_velocities = [
+    Particle(mass=1.0, position=-3.0, velocity=2.0),   # Moving right
+    Particle(mass=1.5, position=-1.0, velocity=1.0),   # Moving right slower
+    Particle(mass=2.0, position=1.0, velocity=-1.5),   # Moving left
+    Particle(mass=1.2, position=3.0, velocity=-0.8),   # Moving left slower
+]
+
+# Create system and plot evolution
+system_with_velocities = ParticleSystem(particles_with_velocities)
+plot_system_evolution(system_with_velocities, max_time=5.0)
