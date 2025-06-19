@@ -47,4 +47,4 @@ if not is_ascending_order(particles_input):
 input = [Particle(m, y) for m, y in particles_input]
 
 system = ParticleSystem(input)
-print("Solution:" + str(system.get_perfect_solution()))
+print("Solution:" + str(system.perfect_solution()))
