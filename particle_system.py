@@ -46,14 +46,15 @@ class ParticleSystem:
     # After the collision, the particles will combined into one larger particle.
     def next_collision(self):
         min_time = float('inf')
-        pair = None
+        ghost = None
+        k = None
         for i in range(len(self.particles) - 1):
             time = self.particles[i].perfect_time(self.particles[i+1])
             if time < min_time:
                 min_time = time
                 ghost = self.particles[i] + self.particles[i+1]
                 k = i
-        return min_time, pair, k
+        return min_time, ghost, k
     
     def perfect_solution(self):
         if len(self.particles) < 1:
@@ -66,7 +67,7 @@ class ParticleSystem:
         else:
             min_time, ghost, k = self.next_collision()
             p1, p2 = self.particles[k], self.particles[k+1]
-            dif = p1.perfectdifference(p2)
+            dif = p1.perfect_difference(p2)
             merged_system = ParticleSystem(self.particles[:k] + [ghost] + self.particles[k+2:])
             merged_solution = merged_system.perfect_solution()
             return merged_solution[:k] + [merged_solution[k] + (p2.mass * dif)/(ghost.mass), merged_solution[k] - (p1.mass * dif)/(ghost.mass)] + merged_solution[k+1:]
