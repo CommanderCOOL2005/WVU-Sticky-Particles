@@ -1,11 +1,14 @@
 import math 
 
 class Particle:
+    _next_id = 0
     def __init__(self, mass, position, velocity=0, acceleration=0):
         self.mass = mass
         self.position = position
         self.velocity = velocity
         self.acceleration = acceleration
+        self.id = Particle._next_id
+        Particle._next_id += 1
 
     def __repr__(self):
         return f"Particle(m={self.mass}, y={self.position}, v={self.velocity}, a={self.acceleration})"

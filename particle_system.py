@@ -4,6 +4,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+
 class ParticleSystem:
     def __init__(self, particles: list[Particle] = None, relative_velocity=0):
         if particles is None:
@@ -54,7 +56,7 @@ class ParticleSystem:
                         new_accel -= self.particles[j].mass
                     else:
                         new_accel += self.particles[j].mass
-                self.particles[i].acceleration = new_accel
+                self.particles[i].acceleration = 0.5*new_accel
             self.flags["accelerations_set"] = True
 
     def normalize_mass(self):
@@ -77,20 +79,21 @@ class ParticleSystem:
             for p in self.particles:
                 p.velocity -= total_velocity
             self.flags["has_zero_mom"] = True
+
     def do_non_destructive(self):
         self.get_center_of_mass()
         self.get_total_mass()
         self.get_total_momentum()
     
     def do_things(self, set_accelerations = False, normalize_mass = False, center_mass = False, center_momentum = False):
-        if set_accelerations:
-            self.set_accelerations()
         if normalize_mass:
             self.normalize_mass()
         if center_mass:
             self.center_mass()
         if center_momentum:
             self.center_momentum()
+        if set_accelerations:
+            self.set_accelerations()
 
     def do_everything(self, set_accelerations = True, normalize_mass = True, center_mass = True, center_momentum = True):
         self.do_things(set_accelerations, normalize_mass, center_mass, center_momentum)
@@ -101,7 +104,7 @@ class ParticleSystem:
         for key in self.flags.keys():
             self.flags[key] = False
 
-    
+
     # Find the time of the next perfect collision in the system.
     # Each collision gives us the following information:
     # v1 - v2 = sqrt((y2 - y1) * (m1 + m2))
@@ -118,7 +121,7 @@ class ParticleSystem:
                 k = i
         return min_time, ghost, k
     
-    def perfect_solution(self):
+    def get_perfect_solution(self):
         if len(self.particles) < 1:
             return []
         elif len(self.particles) == 1:
@@ -131,10 +134,15 @@ class ParticleSystem:
             p1, p2 = self.particles[k], self.particles[k+1]
             dif = p1.perfect_difference(p2)
             merged_system = ParticleSystem(self.particles[:k] + [ghost] + self.particles[k+2:])
-            merged_solution = merged_system.perfect_solution()
+            merged_solution = merged_system.get_perfect_solution()
             return merged_solution[:k] + [merged_solution[k] + (p2.mass * dif)/(ghost.mass), merged_solution[k] - (p1.mass * dif)/(ghost.mass)] + merged_solution[k+1:]
 
-    def display_info(self):
+    def assign_perfect_solution(self):
+        velocities = self.get_perfect_solution()
+        for i in range(len(self.particles)):
+            self.particles[i].velocity = velocities[i]
+
+    def print_info(self):
         print(f"CHARACTERISTICS:\n" +
               f"{"Total Mass:":27} {round(self.get_total_mass(),5)}\n" +
               f"{"Center of Mass:":27} {round(self.get_center_of_mass(),5)}\n" +
@@ -145,3 +153,10 @@ class ParticleSystem:
               f"{"Zero Center of Mass:":27} {self.flags["has_zero_com"]}\n" +
               f"{"Zero Total Momentum:":27} {self.flags["has_zero_mom"]}\n"
             )
+    
+    def print_particles(self):
+        precision = 5
+        print(f"{"Mass:":13}{[round(p.mass, precision) for p in self.particles]}\n" +
+              f"{"Position:":13}{[round(p.position, precision) for p in self.particles]}\n"+
+              f"{"Velocity:":13}{[round(p.velocity, precision) for p in self.particles]}\n"+
+              f"{"Acceleration:":13}{[round(p.acceleration, precision) for p in self.particles]}\n")
