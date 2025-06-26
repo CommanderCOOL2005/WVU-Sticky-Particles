@@ -47,9 +47,9 @@ from plotter import *
 # input = [Particle(m, y) for m, y in particles_input]
 
 input = [
-    Particle(.8, 0),
-    Particle(.1, 8),
-    Particle(.1, 10),
+    Particle(.5, -0.9),
+    Particle(.1, .1),
+    Particle(.4, 1.1),
 ]
 
 system = ParticleSystem(input)
