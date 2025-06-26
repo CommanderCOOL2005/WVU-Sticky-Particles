@@ -47,10 +47,9 @@ from plotter import *
 # input = [Particle(m, y) for m, y in particles_input]
 
 input = [
-    Particle(1, -2),
-    Particle(2, -1),
-    Particle(3, 1.5),
-    Particle(4, 2.0)
+    Particle(.8, 0),
+    Particle(.1, 8),
+    Particle(.1, 10),
 ]
 
 system = ParticleSystem(input)
@@ -61,10 +60,10 @@ print("\nDemonstrating particle system evolution with collisions:")
 
 # Create particles with positions and velocities
 particles_with_velocities = [
-    Particle(mass=1, position=-10),   # Moving right
-    Particle(mass=100, position=-1),   # Moving right slower
-    Particle(mass=100, position=1),   # Moving left
-    Particle(mass=1, position=10),   # Moving left slower
+    Particle(mass=1.0, position=-3.0, velocity=2.0),   # Moving right
+    Particle(mass=1.5, position=-1.0, velocity=1.0),   # Moving right slower
+    Particle(mass=2.0, position=1.0, velocity=-1.5),   # Moving left
+    Particle(mass=1.2, position=3.0, velocity=-0.8),   # Moving left slower
 ]
 
 # Create system and plot evolution
