@@ -54,6 +54,8 @@ input = [
 ]
 
 system = ParticleSystem(input)
+system.set_accelerations()
+system.display_info()
 print("Solution:" + str(system.perfect_solution()))
 
 # Example: Create a system with particles that have initial velocities

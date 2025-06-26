@@ -9,40 +9,99 @@ class ParticleSystem:
         if particles is None:
             self.particles = []
         else:
-            self.particles = list(particles)
-        self.calibrated = False
+            self.particles = particles
+        self.total_mass = None
+        self.center_of_mass = None
+        self.total_momentum = None
+        self.flags = {
+            "total_mass_set": False,
+            "center_of_mass_set": False,
+            "total_momentum_set": False,
+            "accelerations_set" : False,
+            "has_normal_mass" : False,
+            "has_zero_com" : False, #com = center of mass
+            "has_zero_mom" : False  #mom = momentum
+        }
+        self.do_non_destructive()
         self.rel_vel = relative_velocity  # relative velocity of the system
 
     def get_total_mass(self):
-        return sum(p.mass for p in self.particles)
+        if not self.flags["total_mass_set"]:
+            self.total_mass = sum(p.mass for p in self.particles)
+            self.flags["total_mass"] = True
+        return self.total_mass
     
     def get_center_of_mass(self):
-        return (sum(particle.mass * particle.position for particle in self.particles) / self.get_total_mass(self))
+        if not self.flags["center_of_mass_set"]:
+            self.center_of_mass = sum(p.mass * p.position for p in self.particles) / self.get_total_mass()
+            self.flags["center_of_mass"] = True
+        return self.center_of_mass
+        
+    def get_total_momentum(self):
+        if not self.flags["total_momentum_set"]:
+            self.total_momentum = sum(p.mass * p.velocity for p in self.particles)
+            self.flags["total_momentum"] = True
+        return self.total_momentum
+
+    def set_accelerations(self):
+        if not self.flags["accelerations_set"]:
+            for i in range(len(self.particles)):
+                new_accel = 0
+                for j in range(len(self.particles)):
+                    if i == j:
+                        continue
+                    elif i < j:
+                        new_accel -= self.particles[j].mass
+                    else:
+                        new_accel += self.particles[j].mass
+                self.particles[i].acceleration = new_accel
+            self.flags["accelerations_set"] = True
+
+    def normalize_mass(self):
+        if not self.flags["has_normal_mass"]:
+            total_mass = self.get_total_mass()
+            for p in self.particles:
+                p.mass /= total_mass
+            self.flags["has_normal_mass"] = True
+
+    def center_mass(self):
+        if not self.flags["has_zero_com"]:
+            com = self.get_center_of_mass()
+            for p in self.particles:
+                p.position -= com
+            self.flags["has_zero_com"] = True
+
+    def center_momentum(self):
+        if not self.flags["has_zero_mom"]:
+            total_velocity = sum([p.velocity for p in self.particles])
+            for p in self.particles:
+                p.velocity -= total_velocity
+            self.flags["has_zero_mom"] = True
+    def do_non_destructive(self):
+        self.get_center_of_mass()
+        self.get_total_mass()
+        self.get_total_momentum()
+    
+    def do_things(self, set_accelerations = False, normalize_mass = False, center_mass = False, center_momentum = False):
+        if set_accelerations:
+            self.set_accelerations()
+        if normalize_mass:
+            self.normalize_mass()
+        if center_mass:
+            self.center_mass()
+        if center_momentum:
+            self.center_momentum()
+
+    def do_everything(self, set_accelerations = True, normalize_mass = True, center_mass = True, center_momentum = True):
+        self.do_things(set_accelerations, normalize_mass, center_mass, center_momentum)
+        
     
     def add_particle(self, particle: Particle):
         self.particles.append(particle)
-        self.calibrated = False
+        for key in self.flags.keys():
+            self.flags[key] = False
+
     
-    def calibrate(self):
-        total_mass = sum(particle.mass for particle in self.particles)
-        for particle in self.particles:
-            particle.mass /= total_mass
-        for i in range(len(self.particles)):
-            acceleration = 0
-            for j in range(len(self.particles)):
-                if i == j:
-                    continue
-                if i < j:
-                    acceleration -= self.particles[j].mass
-                else:
-                    acceleration += self.particles[j].mass
-            self.particles[i].acceleration = acceleration
-        self.calibrated = True
-
-    def check_calibration(self):
-        if not self.calibrated:
-            print("WARNING: Particle system is not calibrated. Calibrate if this was not your intention")
-
     # Find the time of the next perfect collision in the system.
     # Each collision gives us the following information:
     # v1 - v2 = sqrt((y2 - y1) * (m1 + m2))
@@ -74,3 +133,15 @@ class ParticleSystem:
             merged_system = ParticleSystem(self.particles[:k] + [ghost] + self.particles[k+2:])
             merged_solution = merged_system.perfect_solution()
             return merged_solution[:k] + [merged_solution[k] + (p2.mass * dif)/(ghost.mass), merged_solution[k] - (p1.mass * dif)/(ghost.mass)] + merged_solution[k+1:]
+
+    def display_info(self):
+        print(f"CHARACTERISTICS:\n" +
+              f"{"Total Mass:":27} {round(self.get_total_mass(),5)}\n" +
+              f"{"Center of Mass:":27} {round(self.get_center_of_mass(),5)}\n" +
+              f"{"Total Momentum:":27} {round(self.get_total_momentum(),5)}\n\n" +
+              f"DEBUG:\n" +
+              f"{"Accelerations Set:":27} {self.flags["accelerations_set"]}\n" +
+              f"{"Normalized Mass:":27} {self.flags["has_normal_mass"]}\n" +
+              f"{"Zero Center of Mass:":27} {self.flags["has_zero_com"]}\n" +
+              f"{"Zero Total Momentum:":27} {self.flags["has_zero_mom"]}\n"
+            )

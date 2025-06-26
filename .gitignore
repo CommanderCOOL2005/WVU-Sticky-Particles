@@ -1,4 +1,5 @@
 /__pycache__
 /.direnv
+.DS_Store
 .envrc
 .venv
