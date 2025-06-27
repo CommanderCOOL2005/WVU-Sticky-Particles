@@ -12,8 +12,11 @@ from particle import *
 from particle_system import *
 from plotter import *
 
-input = [Particle(1,-1,1), Particle(1,1,-1)]
+input = [Particle(1,-1,1), Particle(1,1,-1), Particle(1,0,0)]
 
 system = ParticleSystem(input)
-system.set_accelerations()
-system.step_fancy(1)
+system.do_everything()
+system.print_particles()
+system.step(3)
+system.print_particles()
+
