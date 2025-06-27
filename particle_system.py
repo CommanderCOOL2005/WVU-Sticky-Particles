@@ -3,46 +3,32 @@ from particle import Particle
 import matplotlib.pyplot as plt
 import numpy as np
 
-
-
 class ParticleSystem:
-    def __init__(self, particles: list[Particle] = None, relative_velocity=0):
+    def __init__(
+                self, 
+                particles: list[Particle], 
+                override_normalization = False,
+                override_acceleration = False,
+                relative_velocity=0
+                ):
         if particles is None:
             self.particles = []
         else:
             self.particles = sorted(particles, key=lambda particle: particle.position)
-        self.total_mass = None
-        self.center_of_mass = None
-        self.total_momentum = None
-        self.flags = {
-            "total_mass_set": False,
-            "center_of_mass_set": False,
-            "total_momentum_set": False,
-            "accelerations_set" : False,
-            "has_normal_mass" : False,
-            "has_zero_com" : False, #com = center of mass
-            "has_zero_mom" : False  #mom = momentum
-        }
-        self.set_basics()
+        if not override_normalization:
+            self.normalize_system()
+        if not override_acceleration:
+            self.set_accelerations()
         self.rel_vel = relative_velocity  # relative velocity of the system
 
     def get_total_mass(self):
-        if not self.flags["total_mass_set"]:
-            self.total_mass = sum(p.mass for p in self.particles)
-            self.flags["total_mass"] = True
-        return self.total_mass
+        return sum(p.mass for p in self.particles)
     
     def get_center_of_mass(self):
-        if not self.flags["center_of_mass_set"]:
-            self.center_of_mass = sum(p.mass * p.position for p in self.particles) / self.get_total_mass()
-            self.flags["center_of_mass"] = True
-        return self.center_of_mass
+        return sum(p.mass * p.position for p in self.particles) / self.get_total_mass()
         
     def get_total_momentum(self):
-        if not self.flags["total_momentum_set"]:
-            self.total_momentum = sum(p.mass * p.velocity for p in self.particles)
-            self.flags["total_momentum"] = True
-        return self.total_momentum
+        return sum(p.mass * p.velocity for p in self.particles)
 
     def set_accelerations(self):
         if not self.flags["accelerations_set"]:
@@ -59,32 +45,21 @@ class ParticleSystem:
             self.flags["accelerations_set"] = True
 
     def normalize_mass(self):
-        if not self.flags["has_normal_mass"]:
-            total_mass = self.get_total_mass()
-            for p in self.particles:
-                p.mass /= total_mass
-            self.flags["has_normal_mass"] = True
+        total_mass = self.get_total_mass()
+        for p in self.particles:
+            p.mass /= total_mass
 
     def center_mass(self):
-        if not self.flags["has_zero_com"]:
-            com = self.get_center_of_mass()
-            for p in self.particles:
-                p.position -= com
-            self.flags["has_zero_com"] = True
+        com = self.get_center_of_mass()
+        for p in self.particles:
+            p.position -= com
 
     def center_momentum(self):
-        if not self.flags["has_zero_mom"]:
-            total_velocity = sum([p.velocity for p in self.particles])
-            for p in self.particles:
-                p.velocity -= total_velocity
-            self.flags["has_zero_mom"] = True
-
-    def set_basics(self):
-        self.get_center_of_mass()
-        self.get_total_mass()
-        self.get_total_momentum()
+        total_velocity = sum([p.velocity for p in self.particles])
+        for p in self.particles:
+            p.velocity -= total_velocity
     
-    def do_things(self, set_accelerations = False, normalize_mass = False, center_mass = False, center_momentum = False):
+    def configure(self, set_accelerations = False, normalize_mass = False, center_mass = False, center_momentum = False):
         if normalize_mass:
             self.normalize_mass()
         if center_mass:
@@ -94,16 +69,24 @@ class ParticleSystem:
         if set_accelerations:
             self.set_accelerations()
 
-    def do_everything(self, set_accelerations = True, normalize_mass = True, center_mass = True, center_momentum = True):
-        self.do_things(set_accelerations, normalize_mass, center_mass, center_momentum)
-        
+    def normalize_system(self, set_accelerations = True, normalize_mass = True, center_mass = True, center_momentum = True):
+        self.configure(set_accelerations, normalize_mass, center_mass, center_momentum)
     
-    def add_particle(self, particle: Particle):
+    def add_particle(self, particle: Particle, override_normalization = False, override_acceleration = False):
         self.particles.append(particle)
-        for key in self.flags.keys():
-            self.flags[key] = False
+        if not override_normalization:
+            self.normalize_system()
+        if not override_acceleration:
+            self.set_accelerations()
+    
+    def add_particles(self, particles: list[Particle], override_normalization = False, override_acceleration = False):
+        self.particles.extend(particles)
+        if not override_normalization:
+            self.normalize_system()
+        if not override_acceleration:
+            self.set_accelerations()
 
-    def step(self, totalTime: float):
+    def advance(self, totalTime: float):
         smallestTime = inf
         collisionIndices = []
         collisionNumOfParticles = []
@@ -170,7 +153,7 @@ class ParticleSystem:
             del self.particles[indexStart:indexEnd]
             self.particles.insert(indexStart, newParticle)
             self.set_accelerations()
-            self.step(totalTime-smallestTime)
+            self.advance(totalTime-smallestTime)
             return
         return
 
