@@ -12,11 +12,12 @@ from particle import *
 from particle_system import *
 from plotter import *
 
-input = [Particle(1,-1,1), Particle(1,1,-1), Particle(1,0,0)]
+# input = [Particle(1,-1,1), Particle(1,1,-1)]
+input = [Particle(uniform(0.0001, 1), uniform(-1,1)) for i in range(200)]
 
 system = ParticleSystem(input)
-system.do_everything()
-system.print_particles()
-system.step(3)
-system.print_particles()
+system.normalize_system()
+for p in system.particles:
+    p.velocity = (1 if p.position < 0 else -1)*uniform(0,1)
+plot_ghost_state(system, 5, 100)
 
