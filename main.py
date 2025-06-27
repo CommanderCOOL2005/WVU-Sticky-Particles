@@ -12,10 +12,10 @@ from particle import *
 from particle_system import *
 from plotter import *
 
-input = [Particle(uniform(0.0001, 1), uniform(-1,1), uniform(-1,1)) for i in range(50)]
+input = [Particle(uniform(0.0001, 1), uniform(-1,1), uniform(-1,1)) for i in range(5)]
 
 system = ParticleSystem(input)
-system.assign_perfect_solution()
+system.assign_random_signed_velocities()
 system.print_particles()
 plot_evolution(system, 5, 100)
 

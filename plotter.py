@@ -54,7 +54,6 @@ def plot_evolution(system: ParticleSystem, total_time: float, steps: int):
         for i, trajectory in enumerate(trajectories):
             ax.plot(trajectory.positions, 
                     trajectory.times,
-                    color='green',
                     lw=1) 
             #color=matplotlib.colors.hsv_to_rgb((i/len(trajectories),1,1))
         system.advance(delta_time, next_collision)

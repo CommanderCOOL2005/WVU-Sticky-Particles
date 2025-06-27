@@ -1,4 +1,5 @@
 from math import *
+from random import *
 from particle import Particle
 import matplotlib.pyplot as plt
 import numpy as np
@@ -218,6 +219,10 @@ class ParticleSystem:
         velocities = self.get_perfect_solution()
         for i in range(len(self.particles)):
             self.particles[i].velocity = velocities[i]
+
+    def assign_random_signed_velocities(self, a: float = 0, b:float = 1):
+        for i in range(len(self.particles)):
+            self.particles[i].velocity = (1 if self.particles[i].position < 1 else 0)*uniform(a, b)
 
     def print_info(self):
         print(f"CHARACTERISTICS:\n" +
