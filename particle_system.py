@@ -103,12 +103,7 @@ class ParticleSystem:
         for key in self.flags.keys():
             self.flags[key] = False
 
-    #dont use _currentTime plz
-<<<<<<< HEAD
     def step(self, totalTime: float):
-=======
-    def step_fancy(self, totalTime: float):
->>>>>>> origin/main
         smallestTime = inf
         collisionIndices = []
         collisionNumOfParticles = []
@@ -175,11 +170,7 @@ class ParticleSystem:
             del self.particles[indexStart:indexEnd]
             self.particles.insert(indexStart, newParticle)
             self.set_accelerations()
-<<<<<<< HEAD
             self.step(totalTime-smallestTime)
-=======
-            self.step_fancy(totalTime-smallestTime)
->>>>>>> origin/main
             return
         return
 
