@@ -12,12 +12,7 @@ from particle import *
 from particle_system import *
 from plotter import *
 
-input = [Particle(1,1),
-         Particle(4,3.5),
-         Particle(2,2),
-         Particle(3.5,4),
-         Particle(3,3)]
-# input = [Particle(uniform(0.0001, 1), uniform(-1,1), uniform(-1,1)) for i in range(5)]
+input = [Particle(uniform(0.0001, 1), uniform(-1,1), uniform(-1,1)) for i in range(50)]
 
 system = ParticleSystem(input)
 system.assign_perfect_solution()
