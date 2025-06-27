@@ -49,12 +49,13 @@ def plot_evolution(system: ParticleSystem, total_time: float, steps: int):
     while True:
         next_collision = system.get_next_collision()
         delta_time = min(next_collision.time, total_time - elapsed_time)
-        substeps = int(steps*delta_time/(total_time-elapsed_time))
+        substeps = max(2,int(steps*delta_time/(total_time-elapsed_time)))
         trajectories = compute_ghost_trajectories(system, delta_time, substeps, elapsed_time)
         for i, trajectory in enumerate(trajectories):
             ax.plot(trajectory.positions, 
                     trajectory.times,
-                    color='green') 
+                    color='green',
+                    lw=1) 
             #color=matplotlib.colors.hsv_to_rgb((i/len(trajectories),1,1))
         system.advance(delta_time, next_collision)
         elapsed_time += delta_time
