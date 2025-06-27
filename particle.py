@@ -33,6 +33,9 @@ class Particle:
     def evaluate_ghost_state(self, time):
         return self.position + self.velocity * time + 0.5 * self.acceleration * time * time
     
+    def step_ghost_state(self, time):
+        self.position += self.velocity * time + 0.5 * self.acceleration * time * time
+
     def step(self, deltaTime):
         self.velocity += self.acceleration * deltaTime
         self.position += self.velocity * deltaTime

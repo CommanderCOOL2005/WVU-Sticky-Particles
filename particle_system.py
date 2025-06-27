@@ -1,6 +1,5 @@
-import math
+from math import *
 from particle import Particle
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -24,7 +23,7 @@ class ParticleSystem:
             "has_zero_com" : False, #com = center of mass
             "has_zero_mom" : False  #mom = momentum
         }
-        self.do_non_destructive()
+        self.set_basics()
         self.rel_vel = relative_velocity  # relative velocity of the system
 
     def get_total_mass(self):
@@ -80,7 +79,7 @@ class ParticleSystem:
                 p.velocity -= total_velocity
             self.flags["has_zero_mom"] = True
 
-    def do_non_destructive(self):
+    def set_basics(self):
         self.get_center_of_mass()
         self.get_total_mass()
         self.get_total_momentum()
@@ -103,9 +102,53 @@ class ParticleSystem:
         self.particles.append(particle)
         for key in self.flags.keys():
             self.flags[key] = False
+
+    #dont use _currentTime plz
+    def step_fancy(self, time: float, stepSize = 0, _currentTime = 0):
+        #TODO support multiple separate collisions happening at the same time
+        currentTime = _currentTime
+        collisionTime = inf
+        collisionIndex = -1
+        collisionIndexRange = 0
+        for i in range(len(self.particles) - 1):
+            p1 = self.particles[i]
+            p2 = self.particles[i+1]
+            discriminant = 2*p1.acceleration*(p2.position-p1.position) + 2*p2.acceleration(p1.position - p2.position) + (p1.velocity-p2.velocity)**2
+            if discriminant < 0: #no collisions whatsoever, skip
+                continue
+            else:
+                sqrtDisc = sqrt(discriminant)
+                greaterTime = (p2.velocity - p1.velocity + sqrtDisc)/(p1.acceleration - p2.acceleration)
+                lesserTime = (p2.velocity - p1.velocity - sqrtDisc)/(p1.acceleration - p2.acceleration)
+                actualTime = -13490091340
+                if lesserTime > greaterTime:
+                    temp = greaterTime
+                    greaterTime = lesserTime
+                    lesserTime = temp
+                if greaterTime < 0: # both collision times are negative, skip
+                    continue
+                if lesserTime < 0:  # one collision is negative, pick the other
+                    actualTime = greaterTime
+                else:               # pick the smallest one as both are positive
+                    actualTime = lesserTime
+                if actualTime == collisionTime:
+                    collisionIndexRange += 1
+                elif actualTime < collisionTime:
+                    collisionTime = actualTime
+                    collisionIndex = i
+                    collisionIndexRange = 1
+                else:
+                    continue
+        steppingTime = min(time, collisionTime)
+        for particle in self.particles:
+            particle.step_ghost_state(steppingTime)
+        if collisionIndex != -1:
+            #TODO merge particles
+            
+        
     
     # WARNING: THIS PERMANENTLY AFFECTS THE STATE OF THIS SYSTEM
-    def step_real(self, deltaTime: float, error: float = 0.001):
+    def step(self, deltaTime: float, error: float = 0.001):
         for p in self.particles:
             p.step(deltaTime)
         collisions = []
@@ -149,21 +192,21 @@ class ParticleSystem:
                 if collision not in collisions:
                     collisions.append(collision)
 
-    if len(collisions) != 0:
-        collisions = sorted(collisions, key=min)
-        indexShift = 0
-        for i in range(len(collisions)):
-            indexStart = min(collisions[i]) + indexShift
-            indexEnd = max(collisions[i]) + indexShift
-            collisionParticles = system.particles[indexStart:indexEnd+1]
-            mass = sum([p.mass for p in collisionParticles])
-            position = sum([p.position for p in collisionParticles])/len(collisionParticles)
-            velocity = sum([p.mass*p.velocity for p in collisionParticles])/mass
-            for p in collisionParticles:
-                system.particles.pop(indexStart)
-            system.particles.insert(indexStart, Particle(mass,position,velocity))
-            system.set_accelerations()
-            indexShift -= indexStart + 1
+        if len(collisions) != 0:
+            collisions = sorted(collisions, key=min)
+            indexShift = 0
+            for i in range(len(collisions)):
+                indexStart = min(collisions[i]) + indexShift
+                indexEnd = max(collisions[i]) + indexShift
+                collisionParticles = self.particles[indexStart:indexEnd+1]
+                mass = sum([p.mass for p in collisionParticles])
+                position = sum([p.position for p in collisionParticles])/len(collisionParticles)
+                velocity = sum([p.mass*p.velocity for p in collisionParticles])/mass
+                for p in collisionParticles:
+                    self.particles.pop(indexStart)
+                self.particles.insert(indexStart, Particle(mass,position,velocity))
+                self.set_accelerations()
+                indexShift -= indexStart + 1
 
 
     # Find the time of the next perfect collision in the system.
