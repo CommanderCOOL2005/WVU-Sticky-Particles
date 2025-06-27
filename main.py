@@ -17,6 +17,10 @@ input = [Particle(1,-1,1), Particle(1,1,-1), Particle(1,0,0)]
 system = ParticleSystem(input)
 system.do_everything()
 system.print_particles()
+<<<<<<< HEAD
 system.step(3)
+=======
+system.step_fancy(3)
+>>>>>>> origin/main
 system.print_particles()
 
