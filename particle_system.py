@@ -103,6 +103,67 @@ class ParticleSystem:
         self.particles.append(particle)
         for key in self.flags.keys():
             self.flags[key] = False
+    
+    # WARNING: THIS PERMANENTLY AFFECTS THE STATE OF THIS SYSTEM
+    def step_real(self, deltaTime: float, error: float = 0.001):
+        for p in self.particles:
+            p.step(deltaTime)
+        collisions = []
+        for currentIndex in range(len(self.particles)):
+            collision: set = set()
+            shiftedIndex = currentIndex
+            minIndex = currentIndex
+            maxIndex = currentIndex
+            leftBounded = False
+            rightBounded = False
+            for j in range(len(self.particles)):
+                #top 10 code ever
+                if not leftBounded:
+                    leftBounded = (shiftedIndex) - 1 < 0
+                    if leftBounded:
+                        shiftedIndex = maxIndex
+                if not rightBounded:
+                    rightBounded= (shiftedIndex) + 1 >= len(self.particles)
+                    if rightBounded:
+                        shiftedIndex = minIndex
+
+                if leftBounded and rightBounded:
+                    continue
+                elif leftBounded:
+                    shiftedIndex += 1
+                elif rightBounded:
+                    shiftedIndex -= 1
+                else:
+                    shiftedIndex+= (1 - ((j & 1) << 1))*(j+1)
+                    if j % 2 == 0:
+                        maxIndex = shiftedIndex
+                    else:
+                        minIndex = shiftedIndex
+                if abs(self.particles[shiftedIndex].position - self.particles[currentIndex].position) < error:
+                    if len(collision) == 0:
+                        collision.add(currentIndex)
+                    collision.add(shiftedIndex)
+                else:
+                    break
+            if len(collision) != 0:
+                if collision not in collisions:
+                    collisions.append(collision)
+
+    if len(collisions) != 0:
+        collisions = sorted(collisions, key=min)
+        indexShift = 0
+        for i in range(len(collisions)):
+            indexStart = min(collisions[i]) + indexShift
+            indexEnd = max(collisions[i]) + indexShift
+            collisionParticles = system.particles[indexStart:indexEnd+1]
+            mass = sum([p.mass for p in collisionParticles])
+            position = sum([p.position for p in collisionParticles])/len(collisionParticles)
+            velocity = sum([p.mass*p.velocity for p in collisionParticles])/mass
+            for p in collisionParticles:
+                system.particles.pop(indexStart)
+            system.particles.insert(indexStart, Particle(mass,position,velocity))
+            system.set_accelerations()
+            indexShift -= indexStart + 1
 
 
     # Find the time of the next perfect collision in the system.
