@@ -61,22 +61,20 @@ class ParticleSystem:
             p.position -= com
 
     def center_momentum(self):
-        total_velocity = sum([p.velocity for p in self.particles])
+        total_velocity = sum(p.velocity for p in self.particles)
         for p in self.particles:
             p.velocity -= total_velocity
     
-    def configure(self, set_accelerations = False, normalize_mass = False, center_mass = False, center_momentum = False):
+    def configure(self, normalize_mass = False, center_mass = False, center_momentum = False):
         if normalize_mass:
             self.normalize_mass()
         if center_mass:
             self.center_mass()
         if center_momentum:
             self.center_momentum()
-        if set_accelerations:
-            self.set_accelerations()
 
-    def normalize_system(self, set_accelerations = True, normalize_mass = True, center_mass = True, center_momentum = True):
-        self.configure(set_accelerations, normalize_mass, center_mass, center_momentum)
+    def normalize_system(self, normalize_mass = True, center_mass = True, center_momentum = True):
+        self.configure(normalize_mass, center_mass, center_momentum)
     
     def add_particle(self, particle: Particle, override_normalization = False, override_acceleration = False):
         self.particles.append(particle)
@@ -242,3 +240,8 @@ class ParticleSystem:
               f"{"Position:":13}{[round(p.position, precision) for p in self.particles]}\n"+
               f"{"Velocity:":13}{[round(p.velocity, precision) for p in self.particles]}\n"+
               f"{"Acceleration:":13}{[round(p.acceleration, precision) for p in self.particles]}\n")
+    
+    def dump(self):
+        for i in range(len(self.particles)):
+            print(self.particles[i], end=',')
+        print(self.particles[-1])
