@@ -31,18 +31,16 @@ class ParticleSystem:
         return sum(p.mass * p.velocity for p in self.particles)
 
     def set_accelerations(self):
-        if not self.flags["accelerations_set"]:
-            for i in range(len(self.particles)):
-                new_accel = 0
-                for j in range(len(self.particles)):
-                    if i == j:
-                        continue
-                    elif i < j:
-                        new_accel -= self.particles[j].mass
-                    else:
-                        new_accel += self.particles[j].mass
-                self.particles[i].acceleration = 0.5*new_accel
-            self.flags["accelerations_set"] = True
+        for i in range(len(self.particles)):
+            new_accel = 0
+            for j in range(len(self.particles)):
+                if i == j:
+                    continue
+                elif i < j:
+                    new_accel -= self.particles[j].mass
+                else:
+                    new_accel += self.particles[j].mass
+            self.particles[i].acceleration = 0.5*new_accel
 
     def normalize_mass(self):
         total_mass = self.get_total_mass()
