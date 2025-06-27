@@ -11,7 +11,7 @@ class Particle:
         Particle._next_id += 1
 
     def __repr__(self):
-        return f"Particle(m={self.mass}, y={self.position}, v={self.velocity}, a={self.acceleration})"
+        return f"Particle(mass={self.mass}, position={self.position}, velocity={self.velocity}, acceleration={self.acceleration})"
     
     def __add__(self, other):
         if isinstance(other, Particle):
@@ -35,6 +35,7 @@ class Particle:
     
     def step_ghost_state(self, time):
         self.position += self.velocity * time + 0.5 * self.acceleration * time * time
+        self.velocity += self.acceleration * time
 
     def step(self, deltaTime):
         self.velocity += self.acceleration * deltaTime

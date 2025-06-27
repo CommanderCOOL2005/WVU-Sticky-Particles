@@ -15,13 +15,22 @@ def _get_x_bounds(system: ParticleSystem):
         bound *= 1.5
         return (-bound, bound)
 
+def compute_ghost_trajectories(system: ParticleSystem, total_time: float, steps: int, time_shift: float = 0) -> list[Trajectory]:
+    trajectories = []
+    for i in range(len(system.particles)):
+        new_trajectory = Trajectory()
+        new_trajectory.times = np.linspace(0, total_time, steps)
+        new_trajectory.positions = [system.particles[i].evaluate_ghost_state(time) for time in new_trajectory.times]
+        new_trajectory.times += np.full((steps,),time_shift)
+        trajectories.append(new_trajectory)
+    return trajectories
+
 def plot_ghost_state(system: ParticleSystem, totalTime: float, steps: int):
     fig, ax = plt.subplots()
     ax.set(
         xlim=(_get_x_bounds(system)),
         ylim=(0,totalTime), 
     )
-
     trajectories = compute_ghost_trajectories(system, totalTime, steps)
     for i, trajectory in enumerate(trajectories):
         ax.plot(trajectory.positions, 
@@ -29,17 +38,30 @@ def plot_ghost_state(system: ParticleSystem, totalTime: float, steps: int):
                 color=matplotlib.colors.hsv_to_rgb((i/len(trajectories),1,1)), 
                 lw=0.5)
     plt.show()
-
-def compute_ghost_trajectories(system: ParticleSystem, totalTime: float, steps: int) -> list[Trajectory]:
-    trajectories = []
-    for i, particle in enumerate(system.particles):
-        new_trajectory = Trajectory()
-        new_trajectory.times = np.linspace(0, totalTime, steps)
-        new_trajectory.positions = [system.particles[i].evaluate_ghost_state(time) for time in new_trajectory.times]
-        trajectories.append(new_trajectory)
-    return trajectories
     
-def plot_evolution(system: ParticleSystem, totalTime: float, steps: int):
-    deltaTime = totalTime/steps
-    particle_trajectories = compute_ghost_trajectories(system, totalTime)
+def plot_evolution(system: ParticleSystem, total_time: float, steps: int):
+    elapsed_time = 0
+    fig, ax = plt.subplots()
+    ax.set(
+        xlim=(_get_x_bounds(system)),
+        ylim=(0,total_time), 
+    )
+    while True:
+        next_collision = system.get_next_collision()
+        delta_time = min(next_collision.time, total_time - elapsed_time)
+        substeps = int(steps*delta_time/(total_time-elapsed_time))
+        trajectories = compute_ghost_trajectories(system, delta_time, substeps, elapsed_time)
+        for i, trajectory in enumerate(trajectories):
+            ax.plot(trajectory.positions, 
+                    trajectory.times,
+                    color='green') 
+            #color=matplotlib.colors.hsv_to_rgb((i/len(trajectories),1,1))
+        system.advance(delta_time, next_collision)
+        elapsed_time += delta_time
+        steps -= substeps
+        if(elapsed_time >= total_time):
+             break
+    plt.show()
+    
+
          
