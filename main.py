@@ -51,7 +51,8 @@ input = [
     Particle(2, -1),
     Particle(3, 1.5),
     Particle(4, 2.0),
-    Particle(1.5, 3.0)
+    Particle(1.5, 3.0),
+    Particle(5,2)
 ]
 
 system = ParticleSystem(input)
