@@ -1,6 +1,7 @@
 from math import *
 from random import *
 from particle import Particle
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -27,6 +28,7 @@ class ParticleSystem:
             self.normalize_system()
         if not override_acceleration:
             self.set_accelerations()
+        self.make_rgb_colors()
         self.rel_vel = relative_velocity  # relative velocity of the system
 
     def get_total_mass(self):
@@ -162,7 +164,7 @@ class ParticleSystem:
             newMass = sum(p.mass for p in particlesInCollision)
             newPos = particlesInCollision[0].position
             newVel = sum(p.mass*p.velocity for p in particlesInCollision)/newMass
-            newParticle = Particle(newMass, newPos, newVel)
+            newParticle = Particle(newMass, newPos, newVel, color=particlesInCollision[0].color)
 
             del self.particles[indexStart:indexEnd]
             self.particles.insert(indexStart, newParticle)
@@ -221,6 +223,10 @@ class ParticleSystem:
     def assign_random_signed_velocities(self, a: float = 0, b:float = 1):
         for i in range(len(self.particles)):
             self.particles[i].velocity = (1 if self.particles[i].position < 0 else -1)*uniform(a, b)
+
+    def make_rgb_colors(self):
+        for i, particle in enumerate(self.particles):
+            particle.color = matplotlib.colors.hsv_to_rgb((i/len(self.particles),1,0.75))
 
     def print_info(self):
         print(f"CHARACTERISTICS:\n" +

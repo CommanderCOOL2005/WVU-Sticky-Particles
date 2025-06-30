@@ -12,9 +12,9 @@ from particle import *
 from particle_system import *
 from plotter import *
 
-input = [Particle(uniform(0.01,1), uniform(-1,1)) for i in range(5)]
+input = [Particle(uniform(0.01,1), uniform(-1,1)) for i in range(50)]
 
 system = ParticleSystem(input)
 system.assign_random_signed_velocities()
-plot_evolution(system, 5, 100)
+plot_evolution(system, 3, 200)
 

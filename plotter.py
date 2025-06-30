@@ -5,9 +5,10 @@ import numpy as np
 from particle_system import *
 
 class Trajectory:
-     def __init__(self):
+     def __init__(self, color):
           self.times = []
           self.positions = []
+          self.color = color
 
 def _get_x_bounds(system: ParticleSystem): 
         positions = [p.position for p in system.particles]
@@ -18,7 +19,7 @@ def _get_x_bounds(system: ParticleSystem):
 def compute_ghost_trajectories(system: ParticleSystem, total_time: float, steps: int, time_shift: float = 0) -> list[Trajectory]:
     trajectories = []
     for i in range(len(system.particles)):
-        new_trajectory = Trajectory()
+        new_trajectory = Trajectory(system.particles[i].color)
         new_trajectory.times = np.linspace(0, total_time, steps)
         new_trajectory.positions = [system.particles[i].evaluate_ghost_state(time) for time in new_trajectory.times]
         new_trajectory.times += np.full((steps,),time_shift)
@@ -35,7 +36,7 @@ def plot_ghost_state(system: ParticleSystem, totalTime: float, steps: int):
     for i, trajectory in enumerate(trajectories):
         ax.plot(trajectory.positions, 
                 trajectory.times, 
-                color=matplotlib.colors.hsv_to_rgb((i/len(trajectories),0.7,1)), 
+                color=trajectory.color, 
                 lw=1)
     # plt.show()
     
@@ -54,7 +55,7 @@ def plot_evolution(system: ParticleSystem, total_time: float, steps: int):
         for i, trajectory in enumerate(trajectories):
             ax.plot(trajectory.positions, 
                     trajectory.times,
-                    color=matplotlib.colors.hsv_to_rgb((i/len(trajectories),1,0.7)),
+                    color=trajectory.color,
                     lw=1) 
             #color=matplotlib.colors.hsv_to_rgb((i/len(trajectories),1,1))
         system.advance(delta_time, next_collision)
