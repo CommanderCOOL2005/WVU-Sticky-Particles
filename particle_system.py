@@ -63,7 +63,7 @@ class ParticleSystem:
     def center_momentum(self):
         total_velocity = sum(p.velocity for p in self.particles)
         for p in self.particles:
-            p.velocity -= total_velocity
+            p.velocity -= total_velocity/len(self.particles)
     
     def configure(self, normalize_mass = False, center_mass = False, center_momentum = False):
         if normalize_mass:
@@ -129,14 +129,14 @@ class ParticleSystem:
                         earliest.sizes[-1] += 1
                     else:
                         earliest.indices.append(i)
-                        earliest.sizes.append(1)
+                        earliest.sizes.append(2)
                         lastParticleHadCollision = True
                 elif 0 < collisionTime < earliest.time:       # found new collision candidate
                     earliest.time = collisionTime
                     earliest.indices.clear()
                     earliest.sizes.clear()
                     earliest.indices.append(i)
-                    earliest.sizes.append(1)
+                    earliest.sizes.append(2)
                     lastParticleHadCollision = True
                 else:
                     continue
@@ -156,7 +156,7 @@ class ParticleSystem:
 
         for i, collisionIndex in enumerate(collision.indices): #only runs if a collision will happen
             indexStart = collisionIndex
-            indexEnd = collisionIndex+collision.sizes[i] + 1
+            indexEnd = collisionIndex+collision.sizes[i]
 
             particlesInCollision = self.particles[indexStart:indexEnd]
             newMass = sum(p.mass for p in particlesInCollision)
@@ -239,7 +239,7 @@ class ParticleSystem:
         print(f"{"Mass:":13}{[round(p.mass, precision) for p in self.particles]}\n" +
               f"{"Position:":13}{[round(p.position, precision) for p in self.particles]}\n"+
               f"{"Velocity:":13}{[round(p.velocity, precision) for p in self.particles]}\n"+
-              f"{"Acceleration:":13}{[round(p.acceleration, precision) for p in self.particles]}\n")
+              f"{"Acceleration:":13}{[round(p.acceleration, precision) for p in self.particles]}")
     
     def dump(self):
         for i in range(len(self.particles)):
