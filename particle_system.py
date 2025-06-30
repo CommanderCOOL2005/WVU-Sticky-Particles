@@ -220,7 +220,7 @@ class ParticleSystem:
 
     def assign_random_signed_velocities(self, a: float = 0, b:float = 1):
         for i in range(len(self.particles)):
-            self.particles[i].velocity = (1 if self.particles[i].position < 1 else 0)*uniform(a, b)
+            self.particles[i].velocity = (1 if self.particles[i].position < 0 else -1)*uniform(a, b)
 
     def print_info(self):
         print(f"CHARACTERISTICS:\n" +
