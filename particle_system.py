@@ -164,7 +164,14 @@ class ParticleSystem:
             newMass = sum(p.mass for p in particlesInCollision)
             newPos = particlesInCollision[0].position
             newVel = sum(p.mass*p.velocity for p in particlesInCollision)/newMass
-            newParticle = Particle(newMass, newPos, newVel, color=particlesInCollision[0].color)
+            biggestMass = 0
+            biggestParticle = None
+            for p in particlesInCollision:
+                if p.mass > biggestMass:
+                    biggestParticle = p
+            newColor = biggestParticle.color
+
+            newParticle = Particle(newMass, newPos, newVel, color=newColor)
 
             del self.particles[indexStart:indexEnd]
             self.particles.insert(indexStart, newParticle)
