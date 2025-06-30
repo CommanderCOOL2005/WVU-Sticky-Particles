@@ -97,7 +97,7 @@ class ParticleSystem:
             p1 = self.particles[i]
             p2 = self.particles[i+1]
             discriminant = 2*p1.acceleration*(p2.position-p1.position) + 2*p2.acceleration*(p1.position - p2.position) + (p1.velocity-p2.velocity)**2
-            leeway = -1e15 # prevents very slight numerical error
+            leeway = -1e-15 # prevents very slight numerical error
             if leeway < discriminant < 0:
                 discriminant = 0
             if discriminant < 0: #no collisions whatsoever, skip
