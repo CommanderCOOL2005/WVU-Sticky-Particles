@@ -6,6 +6,10 @@
 # Additionally, total momentum of the system is 0.
 # Conservation of momentum holds
 
+# TODO: Make UI better
+# TODO: Make graphs of other things (N_t, V_t, Energy)
+# TODO: Mark collisions
+
 from random import *
 
 from particle import *
