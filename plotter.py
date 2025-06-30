@@ -35,9 +35,9 @@ def plot_ghost_state(system: ParticleSystem, totalTime: float, steps: int):
     for i, trajectory in enumerate(trajectories):
         ax.plot(trajectory.positions, 
                 trajectory.times, 
-                color=matplotlib.colors.hsv_to_rgb((i/len(trajectories),1,1)), 
-                lw=0.5)
-    plt.show()
+                color=matplotlib.colors.hsv_to_rgb((i/len(trajectories),0.7,1)), 
+                lw=1)
+    # plt.show()
     
 def plot_evolution(system: ParticleSystem, total_time: float, steps: int):
     elapsed_time = 0
@@ -54,6 +54,7 @@ def plot_evolution(system: ParticleSystem, total_time: float, steps: int):
         for i, trajectory in enumerate(trajectories):
             ax.plot(trajectory.positions, 
                     trajectory.times,
+                    color=matplotlib.colors.hsv_to_rgb((i/len(trajectories),1,0.7)),
                     lw=1) 
             #color=matplotlib.colors.hsv_to_rgb((i/len(trajectories),1,1))
         system.advance(delta_time, next_collision)
