@@ -4,6 +4,7 @@ from particle import Particle
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+from helper import *
 
 class Collision:
     def __init__(self, time, indices = [], sizes = []):
@@ -226,6 +227,10 @@ class ParticleSystem:
         velocities = self.get_perfect_solution()
         for i in range(len(self.particles)):
             self.particles[i].velocity = velocities[i]
+
+    def assign_total_question_mark_solution(self):
+        for p in self.particles:
+            p.velocity = -sgn(p.position)*sqrt(abs(2*p.position*p.acceleration))
 
     def assign_random_signed_velocities(self, a: float = 0, b:float = 1):
         for i in range(len(self.particles)):

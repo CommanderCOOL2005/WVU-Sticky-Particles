@@ -6,8 +6,10 @@
 # Additionally, total momentum of the system is 0.
 # Conservation of momentum holds
 
-# TODO: method to say if given configuration converges
 # TODO: perhaps make plot_evolution recursive instead of iterative
+# TODO: make functions pure (aka plotting/getting collision time does not affect state (probably better to instead have a "reset" function))
+# TODO: ability to plot ghost state and actual state at the same time
+# TODO: method to say if given configuration converges
 # TODO: Brute force to see if certain configurations are possible (ie in 5 particles the first two collide then the next two then they all collide together)
 # TODO: Make UI better
 # TODO: Make graphs of other things (N_t, V_t, Energy)
@@ -19,9 +21,9 @@ from particle import *
 from particle_system import *
 from plotter import *
 
-input = [Particle(uniform(0.01,1), uniform(-1,1)) for i in range(50)]
-
-system = ParticleSystem(input)
-system.assign_random_signed_velocities(0.5,1)
-plot_evolution(system, 3, 200)
-
+while True:
+    innputte = [Particle(uniform(0.01,1), uniform(-1,1)) for i in range(4)]
+    system = ParticleSystem(innputte)
+    system.assign_total_question_mark_solution()
+    plot_ghost_state(system, 3, 200)
+    plot_evolution(system, 3, 200)
