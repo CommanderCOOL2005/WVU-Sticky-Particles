@@ -59,7 +59,8 @@ def plot_evolution(system: ParticleSystem, total_time: float, steps: int):
             #color=matplotlib.colors.hsv_to_rgb((i/len(trajectories),1,1))
         system.advance(delta_time, next_collision)
         elapsed_time += delta_time
-        steps -= substeps
+        if (total_time-elapsed_time) != 0:
+            steps -= int(steps*delta_time/(total_time-elapsed_time))
         if(elapsed_time >= total_time):
              break
     plt.show()
