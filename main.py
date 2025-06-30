@@ -6,6 +6,9 @@
 # Additionally, total momentum of the system is 0.
 # Conservation of momentum holds
 
+# TODO: method to say if given configuration converges
+# TODO: perhaps make plot_evolution recursive instead of iterative
+# TODO: Brute force to see if certain configurations are possible (ie in 5 particles the first two collide then the next two then they all collide together)
 # TODO: Make UI better
 # TODO: Make graphs of other things (N_t, V_t, Energy)
 # TODO: Mark collisions
