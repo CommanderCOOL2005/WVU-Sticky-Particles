@@ -16,7 +16,7 @@ def _get_x_bounds(system: ParticleSystem):
         bound *= 1.5
         return (-bound, bound)
 
-def compute_ghost_trajectories(system: ParticleSystem, total_time: float, steps: int, time_shift: float = 0) -> list[Trajectory]:
+def compute_ghost_trajectories(system: ParticleSystem, total_time: float, steps: int, time_shift: float) -> list[Trajectory]:
     trajectories = []
     for i in range(len(system.particles)):
         new_trajectory = Trajectory(system.particles[i].color)
@@ -26,45 +26,47 @@ def compute_ghost_trajectories(system: ParticleSystem, total_time: float, steps:
         trajectories.append(new_trajectory)
     return trajectories
 
-def plot_ghost_state(system: ParticleSystem, totalTime: float, steps: int):
-    fig, ax = plt.subplots()
-    ax.set(
-        xlim=(_get_x_bounds(system)),
-        ylim=(0,totalTime), 
-    )
-    trajectories = compute_ghost_trajectories(system, totalTime, steps)
+def plot_ghost_trajectories(system: ParticleSystem, total_time: float, steps: int, time_shift: float, fig, ax):
+    trajectories = compute_ghost_trajectories(system, total_time, steps, time_shift)
     for i, trajectory in enumerate(trajectories):
         ax.plot(trajectory.positions, 
                 trajectory.times, 
                 color=trajectory.color, 
                 lw=1)
-    # plt.show()
+
+def _plot_ghost_state(system: ParticleSystem, total_time: float, steps: int, fig, ax):
+    plot_ghost_trajectories(system, total_time, steps, 0, fig, ax)
     
-def plot_evolution(system: ParticleSystem, total_time: float, steps: int):
+def _plot_real_state(system: ParticleSystem, total_time: float, steps: int, fig = None, ax = None):
     elapsed_time = 0
-    fig, ax = plt.subplots()
-    ax.set(
-        xlim=(_get_x_bounds(system)),
-        ylim=(0,total_time), 
-    )
     while True:
         next_collision = system.get_next_collision()
         delta_time = min(next_collision.time, total_time - elapsed_time)
         substeps = max(2,int(steps*delta_time/(total_time-elapsed_time)))
-        trajectories = compute_ghost_trajectories(system, delta_time, substeps, elapsed_time)
-        for i, trajectory in enumerate(trajectories):
-            ax.plot(trajectory.positions, 
-                    trajectory.times,
-                    color=trajectory.color,
-                    lw=1) 
-            #color=matplotlib.colors.hsv_to_rgb((i/len(trajectories),1,1))
+        plot_ghost_trajectories(system, delta_time, substeps, elapsed_time, fig, ax)
         system.advance(delta_time, next_collision)
         elapsed_time += delta_time
         if (total_time-elapsed_time) != 0:
             steps -= int(steps*delta_time/(total_time-elapsed_time))
         if(elapsed_time >= total_time):
              break
+
+def plot(system: ParticleSystem, total_time: float, steps: int, plot_real_state: bool= True, plot_ghost_state: bool = True):
+    axNum = int(plot_ghost_state) + int(plot_real_state)
+    fig, axes = plt.subplots(axNum) # NOTE: add ghost state support later
+    if axNum == 1: #this is the dumbest thing i have ever had to write why is matplotlib the stupidest library on earth why would it do something like this
+        axes = [axes]
+    xbounds = _get_x_bounds(system)
+    for ax in axes:
+        ax.set(xbound = xbounds,
+               ybound = (0, total_time)) 
+    axIndex = 0
+    if plot_real_state:
+        _plot_real_state(system, total_time, steps, fig, axes[axIndex])
+        axIndex += 1
+    if plot_ghost_state:
+        _plot_ghost_state(system, total_time, steps, fig, axes[axIndex])
+        axIndex += 1
     plt.show()
-    
 
          
