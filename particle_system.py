@@ -189,7 +189,6 @@ class ParticleSystem:
             time = collision.time
         self.advance(time, collision)
         return time
-        
 
     # Find the time of the next perfect collision in the system.
     # Each collision gives us the following information:

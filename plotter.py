@@ -1,4 +1,4 @@
-import matplotlib
+import copy
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -38,13 +38,14 @@ def _plot_ghost_state(system: ParticleSystem, total_time: float, steps: int, fig
     plot_ghost_trajectories(system, total_time, steps, 0, fig, ax)
     
 def _plot_real_state(system: ParticleSystem, total_time: float, steps: int, fig = None, ax = None):
+    system_copy = copy.deepcopy(system)
     elapsed_time = 0
     while True:
-        next_collision = system.get_next_collision()
+        next_collision = system_copy.get_next_collision()
         delta_time = min(next_collision.time, total_time - elapsed_time)
         substeps = max(2,int(steps*delta_time/(total_time-elapsed_time)))
-        plot_ghost_trajectories(system, delta_time, substeps, elapsed_time, fig, ax)
-        system.advance(delta_time, next_collision)
+        plot_ghost_trajectories(system_copy, delta_time, substeps, elapsed_time, fig, ax)
+        system_copy.advance(delta_time, next_collision)
         elapsed_time += delta_time
         if (total_time-elapsed_time) != 0:
             steps -= int(steps*delta_time/(total_time-elapsed_time))
@@ -53,18 +54,21 @@ def _plot_real_state(system: ParticleSystem, total_time: float, steps: int, fig 
 
 def plot(system: ParticleSystem, total_time: float, steps: int, plot_real_state: bool= True, plot_ghost_state: bool = True):
     axNum = int(plot_ghost_state) + int(plot_real_state)
-    fig, axes = plt.subplots(axNum) # NOTE: add ghost state support later
+    fig, axes = plt.subplots(axNum, figsize=(10,10))
     if axNum == 1: #this is the dumbest thing i have ever had to write why is matplotlib the stupidest library on earth why would it do something like this
         axes = [axes]
     xbounds = _get_x_bounds(system)
+    print(xbounds)
     for ax in axes:
-        ax.set(xbound = xbounds,
+        ax.set(xlim = xbounds,
                ybound = (0, total_time)) 
     axIndex = 0
     if plot_real_state:
+        axes[axIndex].set(title = "Real State")
         _plot_real_state(system, total_time, steps, fig, axes[axIndex])
         axIndex += 1
     if plot_ghost_state:
+        axes[axIndex].set(title = "Ghost State")
         _plot_ghost_state(system, total_time, steps, fig, axes[axIndex])
         axIndex += 1
     plt.show()
