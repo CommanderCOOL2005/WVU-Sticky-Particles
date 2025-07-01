@@ -37,7 +37,6 @@ def plot_ghost_trajectories(system: ParticleSystem, total_time: float, steps: in
 def _plot_ghost_state(system: ParticleSystem, total_time: float, steps: int, fig, ax):
     plot_ghost_trajectories(system, total_time, steps, 0, fig, ax)
     
-#BUG: steps can go into the negatives causing the graphing to break
 def _plot_real_state(system: ParticleSystem, total_time: float, steps: int, fig = None, ax = None):
     system_copy = copy.deepcopy(system)
     elapsed_time = 0
