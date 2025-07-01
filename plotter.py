@@ -46,17 +46,16 @@ def _plot_real_state(system: ParticleSystem, total_time: float, steps: int, fig 
         next_collision = system_copy.get_next_collision()
         delta_time = min(next_collision.time, total_time - elapsed_time)
         substeps = None
-        if total_time == elapsed_time:
-            substeps = steps
-        else:
-            substeps = max(2,int(steps*delta_time/(total_time-elapsed_time)))
+        substeps = max(2,int(steps*delta_time/(total_time-elapsed_time)))
         plot_ghost_trajectories(system_copy, delta_time, substeps, elapsed_time, fig, ax)
         system_copy.advance(delta_time, next_collision)
+        if (total_time-elapsed_time) != 0:
+            temp = int(steps*delta_time/(total_time-elapsed_time))
+            steps -= temp
         elapsed_time += delta_time
         temp_total_steps += substeps
         print(f"{substeps:5}|{temp_total_steps:5}|{steps:5}|{delta_time:3f}| {elapsed_time:3f}")
-        if (total_time-elapsed_time) != 0:
-            steps -= int(steps*delta_time/(total_time-elapsed_time))
+        
         if(elapsed_time >= total_time):
              break
     print()
@@ -79,6 +78,6 @@ def plot(system: ParticleSystem, total_time: float, steps: int, plot_real_state:
         axes[axIndex].set(title = "Ghost State")
         _plot_ghost_state(system, total_time, steps, fig, axes[axIndex])
         axIndex += 1
-    plt.show()
+    # plt.show()
 
          
