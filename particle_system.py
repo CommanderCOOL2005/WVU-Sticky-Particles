@@ -187,7 +187,7 @@ class ParticleSystem:
         time = 0
         if collision.time != inf:
             time = collision.time
-        self.advance(time)
+        self.advance(time, collision)
         return time
         
 
