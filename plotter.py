@@ -54,11 +54,9 @@ def _plot_real_state(system: ParticleSystem, total_time: float, steps: int, fig 
             steps -= temp
         elapsed_time += delta_time
         temp_total_steps += substeps
-        print(f"{substeps:5}|{temp_total_steps:5}|{steps:5}|{delta_time:3f}| {elapsed_time:3f}")
         
         if(elapsed_time >= total_time):
              break
-    print()
 
 def plot(system: ParticleSystem, total_time: float, steps: int, plot_real_state: bool= True, plot_ghost_state: bool = True):
     axNum = int(plot_ghost_state) + int(plot_real_state)
@@ -78,6 +76,6 @@ def plot(system: ParticleSystem, total_time: float, steps: int, plot_real_state:
         axes[axIndex].set(title = "Ghost State")
         _plot_ghost_state(system, total_time, steps, fig, axes[axIndex])
         axIndex += 1
-    # plt.show()
+    plt.show()
 
          
