@@ -1,3 +1,4 @@
+import copy
 from math import *
 from random import *
 from particle import Particle
@@ -64,9 +65,12 @@ class ParticleSystem:
             p.position -= com
 
     def center_momentum(self):
-        total_velocity = sum(p.velocity for p in self.particles)
+        total_momentum = sum(p.mass * p.velocity for p in self.particles)
+        total_mass = sum(p.mass for p in self.particles)
+        mean_velocity = total_momentum / total_mass
+
         for p in self.particles:
-            p.velocity -= total_velocity/len(self.particles)
+            p.velocity -= mean_velocity
     
     def configure(self, normalize_mass = False, center_mass = False, center_momentum = False):
         if normalize_mass:
@@ -134,7 +138,7 @@ class ParticleSystem:
                         earliest.indices.append(i)
                         earliest.sizes.append(2)
                         lastParticleHadCollision = True
-                elif 0 < collisionTime < earliest.time:       # found new collision candidate
+                elif 0 < collisionTime < earliest.time:       # found new collision candidate, exclude zero
                     earliest.time = collisionTime
                     earliest.indices.clear()
                     earliest.sizes.clear()
@@ -189,6 +193,17 @@ class ParticleSystem:
             time = collision.time
         self.advance(time, collision)
         return time
+    
+    def is_equilibrium_solution(self):
+        system_copy = copy.deepcopy(self)
+        while True:
+            time = system_copy.advance_to_next_collision()
+            if time == 0:
+                if len(system_copy.particles) > 1:
+                    return False
+                else:
+                    return True
+        
 
     # Find the time of the next perfect collision in the system.
     # Each collision gives us the following information:
@@ -226,14 +241,17 @@ class ParticleSystem:
         velocities = self.get_perfect_solution()
         for i in range(len(self.particles)):
             self.particles[i].velocity = velocities[i]
+        self.center_momentum()
 
     def assign_total_question_mark_solution(self):
         for p in self.particles:
             p.velocity = -sgn(p.position)*sqrt(abs(2*p.position*p.acceleration))
+        self.center_momentum()
 
     def assign_random_signed_velocities(self, a: float = 0, b:float = 1):
         for i in range(len(self.particles)):
             self.particles[i].velocity = (1 if self.particles[i].position < 0 else -1)*uniform(a, b)
+        self.center_momentum()
 
     def make_rgb_colors(self):
         for i, particle in enumerate(self.particles):
