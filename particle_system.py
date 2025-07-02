@@ -127,18 +127,18 @@ class ParticleSystem:
                 else:               # pick the smallest time as both are positive
                     collisionTime = lesserTime
                 
-                if collisionTime > earliest.time:
-                    lastParticleHadCollision = False
-                    continue
-                
-                if collisionTime == earliest.time:        # add it to an existing collision
+                error = 1e-15
+                if abs(collisionTime-earliest.time) < error:        # add it to an existing collision
                     if lastParticleHadCollision:
                         earliest.sizes[-1] += 1
                     else:
                         earliest.indices.append(i)
                         earliest.sizes.append(2)
                         lastParticleHadCollision = True
-                elif 0 < collisionTime < earliest.time:       # found new collision candidate, exclude zero
+                elif collisionTime + leeway >= earliest.time:
+                    lastParticleHadCollision = False
+                    continue
+                elif 0 < collisionTime - leeway <= earliest.time:       # found new collision candidate, exclude zero
                     earliest.time = collisionTime
                     earliest.indices.clear()
                     earliest.sizes.clear()
