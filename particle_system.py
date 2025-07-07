@@ -73,6 +73,7 @@ class ParticleSystem:
             p.velocity -= mean_velocity
     
     def configure(self, normalize_mass = False, center_mass = False, center_momentum = False):
+        self.particles = sorted(self.particles, key=lambda particle: particle.position)
         if normalize_mass:
             self.normalize_mass()
         if center_mass:
