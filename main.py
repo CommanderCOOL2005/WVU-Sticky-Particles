@@ -1,10 +1,7 @@
 from random import *
 
-from particle import *
-from particle_system import *
 from plotter import *
 
-innputte = [Particle(uniform(0.01,1), uniform(-1,1)) for i in range(4)]
-system = ParticleSystem(innputte)
-system.assign_total_question_mark_solution()
-plot(system, 3, 200)
+particle_input = [Particle(0.5,-1,1),Particle(0.5,1,-1)]
+system = ParticleSystem(particles=particle_input)
+plot_solution(system, total_time=3, steps=200)

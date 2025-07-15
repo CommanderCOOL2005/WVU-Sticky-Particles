@@ -16,7 +16,7 @@ def _get_x_bounds(system: ParticleSystem):
         bound *= 1.5
         return (-bound, bound)
 
-def compute_ghost_trajectories(system: ParticleSystem, total_time: float, steps: int, time_shift: float) -> list[Trajectory]:
+def _compute_ghost_trajectories(system: ParticleSystem, total_time: float, steps: int, time_shift: float) -> list[Trajectory]:
     trajectories = []
     for i in range(len(system.particles)):
         new_trajectory = Trajectory(system.particles[i].color)
@@ -26,10 +26,10 @@ def compute_ghost_trajectories(system: ParticleSystem, total_time: float, steps:
         trajectories.append(new_trajectory)
     return trajectories
 
-def plot_ghost_trajectories(system: ParticleSystem, total_time: float, steps: int, time_shift: float, fig, ax):
-    trajectories = compute_ghost_trajectories(system, total_time, steps, time_shift)
+def plot_ghost_trajectories(system: ParticleSystem, total_time: float, steps: int, time_shift: float, _fig, _ax):
+    trajectories = _compute_ghost_trajectories(system, total_time, steps, time_shift)
     for i, trajectory in enumerate(trajectories):
-        ax.plot(trajectory.positions, 
+        _ax.plot(trajectory.positions, 
                 trajectory.times, 
                 color=trajectory.color, 
                 lw=1)
@@ -57,7 +57,16 @@ def _plot_real_state(system: ParticleSystem, total_time: float, steps: int, fig 
         if(elapsed_time >= total_time):
              break
 
-def plot(system: ParticleSystem, total_time: float, steps: int, plot_real_state: bool= True, plot_ghost_state: bool = True):
+def plot_solution(system: ParticleSystem, total_time: float, steps: int, plot_real_state: bool= True, plot_ghost_state: bool = False):
+    """Generates a plot of the system over time.
+
+    Args:
+        system (ParticleSystem): The system to plot
+        total_time (float): The total time to plot the system for
+        steps (int): Approximately the amount of points to plot for each particle (this will slightly vary due to how the system plots, but it will be very close to this number) 
+        plot_real_state (bool, optional): Whether to plot the actual state of the system. Defaults to True.
+        plot_ghost_state (bool, optional): Whether to plot the "ghost state" of the system, which is how the system would evolve if particles did not stick together and instead just passed through each other. Defaults to False.
+    """
     axNum = int(plot_ghost_state) + int(plot_real_state)
     fig, axes = plt.subplots(axNum, figsize=(10,10))
     if axNum == 1: #this is the dumbest thing i have ever had to write why is matplotlib the stupidest library on earth why would it do something like this
