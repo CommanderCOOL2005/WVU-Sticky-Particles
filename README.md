@@ -22,7 +22,7 @@ Adjustments 2 and 3 can be done because the system is [Galilean Invariant](https
 
 Additionally, the system will also set the acceleration of each particle to follow the Repulsive Pressureless Euler Poisson System. The exact acceleration set is $a_i=\frac{1}{2}\left(\sum_{i<j}m_j-\sum_{i>j}m_j\right)$, where $a_i$ denotes the acceleration of the i'th particle, and $m_j$ denotes the mass of the j'th particle. Note that the particles are ordered from left to right starting at i=0. This formula follows from the second part of RPEP. This can also be overwritten.
 
-If you want the velocities to be set such that the solution is perfect, you can call the ``assign_perfect_solution()`` method found in ``ParticleSystem`` once the system object has been created. 
+A perfect solution is one such that all collisions are "glancing" (i.e. at the precise moment of collision particles have the same velocity). A perfect solution is one where the velocity of each particle is continuous. If you want the velocities to be set such that the solution is perfect, you can call the ``assign_perfect_solution()`` method found in ``ParticleSystem`` once the system object has been created. 
 
 Once a ```ParticleSystem``` has been created, you can simulate and graph the system using the ```plot_solution()``` method found in ```plotter.py```.
 
