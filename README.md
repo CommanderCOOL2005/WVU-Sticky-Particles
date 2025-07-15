@@ -4,9 +4,12 @@ This python code simulates and graphs the evolution of a finite weighted sum of 
 
 The Repulsive Pressureless Euler Poisson System is defined to be
 $\partial_t(\rho) + \partial_x(\rho v) = 0$ 
+
 $\partial_t(\rho v) + \partial_x(\rho v^2) = \frac{1}{2}(\text{sgn} * \rho)\rho$
+
 The code simulates and plots the paths of a weighted dirac sum, or if your initial rho distribution is equal to 
-$\rho_0 = \sum_{i=1}^n m_i \delta_y_i$
+
+$\rho_0 = \sum_{i=1}^n m_i \delta_{y_i}$
 
 # Usage
 To use this code, import ```plotter.py``` into a python file. To create a particle system, the ```ParticleSystem()``` constructor must be called with an input of a list of particles created by the ```Particle()``` constructor. Note that passing in a list of particles into a ```ParticleSystem``` object will:
