@@ -316,6 +316,7 @@ class ParticleSystem:
         for i in range(len(self.particles)):
             self.particles[i].velocity = velocities[i]
         self.center_momentum()
+        self.make_rgb_colors()
     
     
     def assign_random_signed_velocities(self, a: float = 0, b:float = 1):

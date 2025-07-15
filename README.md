@@ -5,7 +5,8 @@ To use this code, import ```plotter.py``` into a python file. To create a partic
 1. Divide the mass of each particle by the total mass of the list of particles so that the ```ParticleSystem```'s total mass will be one. 
 2. Shift the position of each particle so that the center of mass of the system is zero.
 3. Shift the velocity of each particle so that the total momentum of the system is zero.
-These can all be done because the system is [Galilean Invariant](https://en.wikipedia.org/wiki/Galilean_invariance). 
+
+These adjustments can all be done because the system is [Galilean Invariant](https://en.wikipedia.org/wiki/Galilean_invariance). 
 If you want the velocities to be set such that the solution is perfect, you can call the ``assign_perfect_solution()`` method found in ``ParticleSystem`` once the system object has been created. 
 
 Once a ```ParticleSystem``` has been created, you can simulate and graph the system using the ```plot_solution()``` method found in ```plotter.py```.
@@ -14,7 +15,7 @@ Once a ```ParticleSystem``` has been created, you can simulate and graph the sys
 
 Here are some examples:
 
-Example 1: Plotting $p_1=(m_1,\frac{1}{2},y_1=-1,v_1=1),p_2(m_2=\frac{1}{2},y_1=1,v_1=-1)$
+**Example 1:** Plotting $p_1=(m_1,\frac{1}{2},y_1=-1,v_1=1),p_2(m_2=\frac{1}{2},y_1=1,v_1=-1)$
 ```python
 particle_input = [Particle(0.5,-1,1),Particle(0.5,1,-1)]
 system = ParticleSystem(particles=particle_input)
@@ -22,6 +23,39 @@ plot_solution(system, total_time=3, steps=200)
 ```
 The resulting graph is:
 ![Graph of example 1](/example_figures/fig_1.png)
+
+
+**Example 2:** Plotting 40 particles with random masses between 0.5 and 1, positions between -1 and 1, and velocities between -1 and 1
+```python
+particle_input = [Particle(uniform(0.5,1), uniform(-1,1), uniform(-1,1)) for i in range(40)]
+system = ParticleSystem(particles=particle_input)
+plot_solution(system, total_time=3, steps=200)
+```
+
+The resulting graph is:
+![Graph of example 2](/example_figures/fig_2.png)
+
+**Example 3:** Plotting 40 particles with random masses and positions and using ```assign_perfect_solution()``` to assign velocities such that the solution is perfect
+```python
+particle_input = [Particle(uniform(0.5,1), uniform(-1,1)) for i in range(40)]
+system = ParticleSystem(particles=particle_input)
+system.assign_perfect_solution() #assigns a perfect solution
+plot_solution(system, total_time=3, steps=200)
+```
+
+The resulting graph is:
+![Graph of example 3](/example_figures/fig_3.png)
+
+**Example 4:** Same setup as example 3 except the ghost state of the system is plotted as well
+
+```python
+particle_input = [Particle(uniform(0.5,1), uniform(-1,1)) for i in range(40)]
+system = ParticleSystem(particles=particle_input)
+system.assign_perfect_solution() #assigns a perfect solution
+plot_solution(system, total_time=3, steps=200, plot_ghost_state=True) #plot ghost state as well
+```
+The resulting graph is:
+![Graph of example 4](/example_figures/fig_4.png)
 
 # Dependencies
 This code uses matplotlib version 3.10.3
