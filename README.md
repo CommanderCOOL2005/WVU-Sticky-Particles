@@ -3,6 +3,7 @@ This python code simulates and graphs the evolution of a finite weighted sum of 
 # Background
 
 The Repulsive Pressureless Euler Poisson System is defined to be
+
 $\partial_t(\rho) + \partial_x(\rho v) = 0$ 
 
 $\partial_t(\rho v) + \partial_x(\rho v^2) = \frac{1}{2}(\text{sgn} * \rho)\rho$
