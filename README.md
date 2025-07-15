@@ -18,7 +18,7 @@ To use this code, import ```plotter.py``` into a python file. To create a partic
 2. Shift the position of each particle so that the center of mass of the system is zero.
 3. Shift the velocity of each particle so that the total momentum of the system is zero.
 
-These adjustments can all be done because the system is [Galilean Invariant](https://en.wikipedia.org/wiki/Galilean_invariance). This "normalization" can be overwritten if desired.
+Adjustments 2 and 3 can be done because the system is [Galilean Invariant](https://en.wikipedia.org/wiki/Galilean_invariance), and adjustment 1 is to make the measure a [probability measure](https://en.wikipedia.org/wiki/Probability_measure) This "normalization" can be overwritten if desired.
 
 Additionally, the system will also set the acceleration of each particle to follow the Repulsive Pressureless Euler Poisson System. The exact acceleration set is $a_i=\frac{1}{2}\left(\sum_{i<j}m_j-\sum_{i>j}m_j\right)$, where $a_i$ denotes the acceleration of the i'th particle, and $m_j$ denotes the mass of the j'th particle. Note that the particles are ordered from left to right starting at i=0. This formula follows from the second part of RPEP. This can also be overwritten.
 
