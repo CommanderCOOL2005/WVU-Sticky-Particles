@@ -57,7 +57,9 @@ def _plot_real_state(system: ParticleSystem, total_time: float, steps: int, fig 
         if(elapsed_time >= total_time):
              break
 
-def plot_solution(system: ParticleSystem, total_time: float, steps: int, plot_real_state: bool= True, plot_ghost_state: bool = False):
+
+#TODO: make setting to plot to quadratic bound exactly
+def plot_solution(system: ParticleSystem, total_time: float, steps: int, plot_real_state: bool= True, plot_ghost_state: bool = False, plot_quadratic_bound: bool = False):
     """Generates a plot of the system over time.
 
     Args:
@@ -76,14 +78,28 @@ def plot_solution(system: ParticleSystem, total_time: float, steps: int, plot_re
         ax.set(xlim = xbounds,
                ybound = (0, total_time)) 
     axIndex = 0
+    if plot_quadratic_bound:
+        yL0 = system.particles[0].position
+        yR0 = system.particles[-1].position
+        time_to_plot = 2*sqrt(yR0-yL0)
+        if time_to_plot > total_time:
+            time_to_plot = total_time
+        bound_steps = int(time_to_plot*steps)
+        t = np.linspace(0,time_to_plot,bound_steps)
+        fLt = yL0*(t-2*sqrt(yR0-yL0))**2/(4*(yR0-yL0))
+        fRt = yR0*(t-2*sqrt(yR0-yL0))**2/(4*(yR0-yL0))
+        axes[axIndex].plot(fLt,t,color='black',linestyle='dashed', lw=0.5)
+        axes[axIndex].plot(fRt,t,color='black',linestyle='dashed', lw=0.5)
     if plot_real_state:
         axes[axIndex].set(title = "Real State")
         _plot_real_state(system, total_time, steps, fig, axes[axIndex])
         axIndex += 1
+    
     if plot_ghost_state:
         axes[axIndex].set(title = "Ghost State")
         _plot_ghost_state(system, total_time, steps, fig, axes[axIndex])
         axIndex += 1
+    
     plt.show()
 
          
