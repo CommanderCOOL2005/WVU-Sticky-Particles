@@ -18,7 +18,6 @@ class ParticleSystem:
     def __init__(
                 self, 
                 particles: list[Particle], 
-                override_adjustments = False,
                 _relative_velocity=0
                 ):
         """Creates a system of particles that represent when the initial mass measure (rho_0) in the Repulsive Pressureless Euler Poisson system is a weighted sum of dirac masses.
@@ -29,15 +28,12 @@ class ParticleSystem:
             3) Their center of mass is 0.
             4) Their total momentum is 0,
             5) Their accelerations are set according to RPEP.
-        If for some reason you do not want these adjustments, you can set ``override_adjustments`` to True, which will prevent (2,3,4,5) from happening. You can then use the method ``configure()`` to adjust as you like. Note that (1) cannot be overriden
 
         Args:
             particles (list[Particle]): A list of particles 
-            override_normalization (bool, optional): Whether to override adjustments (2,3,4,5)
         """
         self.particles = particles
-        if not override_adjustments:
-            self.adjust_solution()
+        self.adjust_solution()
         self.make_rgb_colors()
         self.rel_vel = _relative_velocity  # relative velocity of the system
 
@@ -54,21 +50,21 @@ class ParticleSystem:
         self.particles = sorted(self.particles, key=lambda particle: particle.position)
 
     def _normalize_mass(self):
-        """Adjusts the particles in the system so that their sum is 1. It is not recommended to call this directly, please call this using ``configure()`` or ``adjust_system()``.
+        """Adjusts the particles in the system so that their sum is 1. It is not recommended to call this directly, please call this using ``configure()`` or ``adjust_solution()``.
         """
         total_mass = self.get_total_mass()
         for p in self.particles:
             p.mass /= total_mass
 
     def _center_mass(self):
-        """Adjusts the particles in the system so that their center of mass is 0. It is not recommended to call this directly, please call this using ``configure()`` or ``adjust_system()``.
+        """Adjusts the particles in the system so that their center of mass is 0. It is not recommended to call this directly, please call this using ``configure()`` or ``adjust_solution()``.
         """
         com = self.get_center_of_mass()
         for p in self.particles:
             p.position -= com
 
     def _center_momentum(self):
-        """Adjusts the particles in the system so that their center of mass is 0. It is not recommended to call this directly, please call this using ``configure()`` or ``adjust_system()``.
+        """Adjusts the particles in the system so that their center of mass is 0. It is not recommended to call this directly, please call this using ``configure()`` or ``adjust_solution()``.
         """
         total_momentum = sum(p.mass * p.velocity for p in self.particles)
         total_mass = sum(p.mass for p in self.particles)
@@ -78,7 +74,7 @@ class ParticleSystem:
             p.velocity -= mean_velocity
     
     def _set_accelerations(self):
-        """Sets the acceleration of every particle so that they follow the RPEP system. It is not recommended to call this directly, please call this using ``configure()`` or ``adjust_system()``.
+        """Sets the acceleration of every particle so that they follow the RPEP system. It is not recommended to call this directly, please call this using ``configure()`` or ``adjust_solution()``.
         """
         for i in range(len(self.particles)):
             new_accel = 0
@@ -120,30 +116,33 @@ class ParticleSystem:
         """
         self.configure(normalize_mass, center_mass, center_momentum, set_accelerations)
     
-    def add_particle(self, particle: Particle, override_adjustments = False):
+    def add_particle(self, particle: Particle):
         """Adds a new particle to the system and renormalizes the system and assigns new accelerations to each particle
 
         Args:
             particle (Particle): _description_
-            override_normalization (bool, optional): Defaults to False.
-            override_acceleration (bool, optional): Defaults to False.
         """
         self.particles.append(particle)
-        if not override_adjustments:
-            self.adjust_solution()
+        self.adjust_solution()
     
-    def add_particles(self, particles: list[Particle], override_adjustments = False, override_acceleration = False):
+    def add_particles(self, particles: list[Particle]):
         """Adds multiple new particles to the system and renormalizes the system.
 
         Args:
             particles (list[Particle]): _description_
-            override_normalization (bool, optional):  Defaults to False.
-            override_acceleration (bool, optional): Defaults to False.
         """
         self.particles.extend(particles)
-        if not override_adjustments:
-            self.adjust_solution()
-    
+        self.adjust_solution()
+
+    def tweak_particle(self, particle_index, mass=None, position=None,velocity=None):
+        if mass:
+            self.particles[particle_index].mass=mass
+        if position:
+            self.particles[particle_index].position=position
+        if velocity:
+            self.particles[particle_index].velocity=velocity
+        self.adjust_solution()
+
     def get_next_collision(self) -> Collision:
         """Gets the next collision that the system will experience. The information about the collision is stored in a ``Collision`` object. 
 
@@ -333,14 +332,9 @@ class ParticleSystem:
         """Prints some characteristic and debug information about the system
         """
         print(f"CHARACTERISTICS:\n" +
-              f"{"Total Mass:":27} {round(self.get_total_mass(),5)}\n" +
-              f"{"Center of Mass:":27} {round(self.get_center_of_mass(),5)}\n" +
-              f"{"Total Momentum:":27} {round(self.get_total_momentum(),5)}\n\n" +
-              f"DEBUG:\n" +
-              f"{"Accelerations Set:":27} {self.flags["accelerations_set"]}\n" +
-              f"{"Normalized Mass:":27} {self.flags["has_normal_mass"]}\n" +
-              f"{"Zero Center of Mass:":27} {self.flags["has_zero_com"]}\n" +
-              f"{"Zero Total Momentum:":27} {self.flags["has_zero_mom"]}\n"
+              f"{"Total Mass:":18} {round(self.get_total_mass(),5)}\n" +
+              f"{"Center of Mass:":18} {round(self.get_center_of_mass(),5)}\n" +
+              f"{"Total Momentum:":18} {round(self.get_total_momentum(),5)}"
             )
     
     def print_particles(self):
