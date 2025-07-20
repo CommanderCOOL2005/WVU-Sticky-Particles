@@ -142,6 +142,15 @@ class ParticleSystem:
         if velocity:
             self.particles[particle_index].velocity=velocity
         self.adjust_solution()
+    
+    def shift_particle(self, particle_index, mass=None, position=None,velocity=None):
+        if mass:
+            self.particles[particle_index].mass+=mass
+        if position:
+            self.particles[particle_index].position+=position
+        if velocity:
+            self.particles[particle_index].velocity+=velocity
+        self.adjust_solution()
 
     def get_next_collision(self) -> Collision:
         """Gets the next collision that the system will experience. The information about the collision is stored in a ``Collision`` object. 
