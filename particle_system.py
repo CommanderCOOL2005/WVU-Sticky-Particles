@@ -90,7 +90,6 @@ class ParticleSystem:
                 else:
                     new_accel += self.particles[j].mass
             self.particles[i].acceleration = 0.5*new_accel
-    
     def configure(self, normalize_mass = False, center_mass = False, center_momentum = False, set_accelerations = False):
         """Configures the system in various ways. Will always sort the particles by position from negative to positive.
 
@@ -108,7 +107,7 @@ class ParticleSystem:
         if center_momentum:
             self._center_momentum()
         if set_accelerations:
-            self._set_accelerations
+            self._set_accelerations()
 
     def adjust_solution(self, normalize_mass = True, center_mass = True, center_momentum = True, set_accelerations = True):
         """Normalizes the system so that the system's total mass is one, center of mass is zero, total momentum is zero, and accelerations are set according to RPEP.
@@ -238,7 +237,7 @@ class ParticleSystem:
 
             del self.particles[indexStart:indexEnd]
             self.particles.insert(indexStart, newParticle)
-            self._set_accelerations()
+            self.adjust_solution()
 
             self.advance(total_time-collision.time)
             return
