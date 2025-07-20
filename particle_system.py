@@ -347,6 +347,8 @@ class ParticleSystem:
               f"{"Acceleration:":13}{[round(p.acceleration, precision) for p in self.particles]}")
     
     def dump(self):
+        print("[", end="")
         for i in range(len(self.particles)):
             print(self.particles[i], end=',')
-        print(self.particles[-1])
+        print(self.particles[-1],end="")
+        print("]")
