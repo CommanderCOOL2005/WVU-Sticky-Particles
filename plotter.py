@@ -59,16 +59,25 @@ def _plot_real_state(system: ParticleSystem, total_time: float, steps: int, fig 
 
 
 #TODO: make setting to plot to quadratic bound exactly
-def plot_solution(system: ParticleSystem, total_time: float, steps: int, plot_real_state: bool= True, plot_ghost_state: bool = False, plot_quadratic_bound: bool = False):
+def plot_solution(system: ParticleSystem, total_time: float = 5, steps: int = 200, plot_real_state: bool= True, plot_ghost_state: bool = False, plot_quadratic_bound: bool = False, plot_until_time_bound: bool=False, time_bound_multiplier: float = 1.2):
     """Generates a plot of the system over time.
 
     Args:
         system (ParticleSystem): The system to plot
-        total_time (float): The total time to plot the system for
-        steps (int): Approximately the amount of points to plot for each particle (this will slightly vary due to how the system plots, but it will be very close to this number) 
+        total_time (float): The total time to plot the system for. Defaults to 5.
+        steps (int): Approximately the amount of points to plot for each particle (this will slightly vary due to how the system plots, but it will be very close to this number). Defaults to 200.
         plot_real_state (bool, optional): Whether to plot the actual state of the system. Defaults to True.
         plot_ghost_state (bool, optional): Whether to plot the "ghost state" of the system, which is how the system would evolve if particles did not stick together and instead just passed through each other. Defaults to False.
+        plot_quadratic_bound (bool, optional): Plots the quadratic bound of the system. If a system goes to equilibrium, then no particle in the system will cross this bound (it is a necessary and sufficient condition). Defaults to False.
+        plot_until_time_bound (bool, optional): Sets ``total_time`` (overriding it) to ``time_bound_multiplier*2*sqrt(yR - yL)``. The expression ``2*sqrt(yR - yL)`` gives the time bound of a system, or the maximum time the system must converge if it reaches equilibrium. ``yR`` is the position of the rightmost particle, and ``yL`` is the position of the leftmost particle. Defaults to False.
+        time_bound_multiplier (float, optional): The variable ``time_bound_multiplier*2*sqrt(yR - yL)``. This scales the graph so that the time bound is not directly at the top. Defaults to 1.2.
+
     """
+    if plot_until_time_bound:
+        if len(system.particles) < 2:
+            total_time = 5
+        else:
+            total_time = time_bound_multiplier*2*sqrt(system.particles[-1].position - system.particles[0].position)
     axNum = int(plot_ghost_state) + int(plot_real_state)
     fig, axes = plt.subplots(axNum, figsize=(10,10))
     if axNum == 1: #this is the dumbest thing i have ever had to write why is matplotlib the stupidest library on earth why would it do something like this

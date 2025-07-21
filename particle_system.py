@@ -333,7 +333,7 @@ class ParticleSystem:
         self._center_momentum()
         self.make_rgb_colors()
     
-    def assign_random_signed_velocities(self, a: float = 0, b:float = 1):
+    def assign_random_signed_velocities(self, min_speed: float = 0, max_speed:float = 1):
         """Sets the magnitude of the velocity of each particle between ``a`` and ``b``. The sign of the velocity will be positive if the position of the particle is less than zero, and be negative if the position of the particle is greater than zero 
 
         Args:
@@ -341,8 +341,8 @@ class ParticleSystem:
             b (float, optional): _description_. Defaults to 1.
         """
         for i in range(len(self.particles)):
-            self.particles[i].velocity = (1 if self.particles[i].position < 0 else -1)*uniform(a, b)
-        self._center_momentum()
+            self.particles[i].velocity = (1 if self.particles[i].position < 0 else -1)*uniform(min_speed, max_speed)
+        self.adjust_solution()
 
     def make_rgb_colors(self):
         """Makes it so the particles have a rainbow color pallete when graphed.
