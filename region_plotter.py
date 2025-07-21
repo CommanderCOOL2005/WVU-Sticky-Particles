@@ -1,3 +1,4 @@
+import colorsys
 import csv
 import sys
 
@@ -61,9 +62,11 @@ min_ham = min(p[3] for p in data)
 max_ham = max(p[3] for p in data)
 for p in data:
     color = (0,0,0)
+    heat = (p[3] - min_ham)/(max_ham - min_ham)
     if p[2]:
-        heat = 255*(p[3] - min_ham)/(max_ham - min_ham)
-        color = (heat, 100, 255-heat)
+        color = [round(255*v) for v in colorsys.hsv_to_rgb(0.35 - 0.2*heat,0.8*(1-heat),0.9)]
+    else:
+        color = [120*heat, 120*heat, 120*heat]
     region_surface.set_at((p[0],p[1]),color)
 
 while True:
@@ -83,7 +86,7 @@ while True:
     
     screen.blit(region_surface, (0,0))
     if mouse_pos:
-        pygame.draw.circle(screen, center=mouse_pos, radius=2, color=(255,255,255))
+        pygame.draw.circle(screen, center=mouse_pos, radius=4, color=(255,255,255))
     
     if mouse_is_clicking and mouse_last_click:
         world_space_vector = (
