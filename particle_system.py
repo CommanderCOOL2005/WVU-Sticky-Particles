@@ -46,6 +46,19 @@ class ParticleSystem:
     def get_total_momentum(self):
         return sum(p.mass * p.velocity for p in self.particles)
     
+    def get_kinetic_energy(self):
+        return sum(p.mass*p.velocity*p.velocity for p in self.particles)
+    
+    def get_potential_energy(self):
+        potential = 0
+        for i in range(len(self.particles)):
+            for j in range(i):
+                potential += self.particles[i].mass*self.particles[j].mass*abs(self.particles[i].position - self.particles[j].position)
+        return potential
+        
+    def get_hamiltonian(self):
+        return self.get_kinetic_energy() - self.get_potential_energy() 
+    
     def sort_particles(self):
         self.particles = sorted(self.particles, key=lambda particle: particle.position)
 
