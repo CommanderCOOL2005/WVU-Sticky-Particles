@@ -334,11 +334,11 @@ class ParticleSystem:
         self.make_rgb_colors()
     
     def assign_random_signed_velocities(self, min_speed: float = 0, max_speed:float = 1):
-        """Sets the magnitude of the velocity of each particle between ``a`` and ``b``. The sign of the velocity will be positive if the position of the particle is less than zero, and be negative if the position of the particle is greater than zero 
+        """Sets the magnitude of the velocity of each particle between ``min_speed`` and ``max_speed``. The sign of the velocity will be positive if the position of the particle is less than zero, and be negative if the position of the particle is greater than zero 
 
         Args:
-            a (float, optional): _description_. Defaults to 0.
-            b (float, optional): _description_. Defaults to 1.
+            min_speed (float, optional): _description_. Defaults to 0.
+            max_speed (float, optional): _description_. Defaults to 1.
         """
         for i in range(len(self.particles)):
             self.particles[i].velocity = (1 if self.particles[i].position < 0 else -1)*uniform(min_speed, max_speed)
