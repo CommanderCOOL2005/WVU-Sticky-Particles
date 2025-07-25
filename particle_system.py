@@ -371,7 +371,7 @@ class ParticleSystem:
     def dump(self):
         output = ""
         output += "["
-        for i in range(len(self.particles)):
+        for i in range(len(self.particles) - 1):
             output += str(self.particles[i]) + ", "
         output += str(self.particles[-1])
         output += "]"
