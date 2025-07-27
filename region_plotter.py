@@ -3,12 +3,12 @@ import csv
 import sys
 
 import pygame
+import helper
 from pygame.locals import *
 
 from plotter import *
 
-print("File to read: ", end="")
-filename = input()
+filename = "example.csv"
 solution = None
 TARGET_INDEX = None
 IMAGE_WIDTH = None
@@ -18,7 +18,7 @@ POS_MAX_SHIFT = None
 VEL_MIN_SHIFT = None
 VEL_MAX_SHIFT = None
 data = []
-with open(file=f"region_data/{filename}.csv", mode='r') as csvfile:
+with open(file=f"region_data/{filename}", mode='r') as csvfile:
     masses = None
     positions = None
     velocities = None
@@ -60,13 +60,15 @@ region_surface = pygame.Surface((IMAGE_WIDTH, IMAGE_HEIGHT))
 #Precompute the surface
 min_ham = min(p[3] for p in data)
 max_ham = max(p[3] for p in data)
+c1=[44,127,184]
+c2=[237,248,127]
 for p in data:
     color = (0,0,0)
     heat = (p[3] - min_ham)/(max_ham - min_ham)
     if p[2]:
-        color = [round(255*v) for v in colorsys.hsv_to_rgb(0.35 - 0.2*heat,0.8*(1-heat),0.9)]
+        color = helper.mix_colors(c1,c2,heat)
     else:
-        color = [120*heat, 120*heat, 120*heat]
+        color = [0,0,0]
     region_surface.set_at((p[0],p[1]),color)
 
 while True:

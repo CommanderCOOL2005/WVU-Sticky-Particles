@@ -1,10 +1,11 @@
 import copy
 import csv
+import os
  
 from plotter import *
 
 while True:
-    initial_input = [Particle(uniform(0.01,1), uniform(-1,1)) for i in range(20)]
+    initial_input = [Particle(uniform(0.01,1), uniform(-1,1),2) for i in range(20)]
     solution = ParticleSystem(initial_input)
     solution.assign_perfect_solution()
     for p in solution.particles:
@@ -18,13 +19,13 @@ while True:
 
 TARGET_INDEX = 0
 
-IMAGE_WIDTH = 800
-IMAGE_HEIGHT = 800
-POS_MIN_SHIFT = -1
+IMAGE_WIDTH = 1000
+IMAGE_HEIGHT = 1000
+POS_MIN_SHIFT = -2
 POS_MAX_SHIFT = 2
 POS_DELTA = (POS_MAX_SHIFT - POS_MIN_SHIFT)/IMAGE_WIDTH
-VEL_MIN_SHIFT = -3
-VEL_MAX_SHIFT = 3
+VEL_MIN_SHIFT = -2
+VEL_MAX_SHIFT = 2
 VEL_DELTA = (VEL_MAX_SHIFT - VEL_MIN_SHIFT)/IMAGE_HEIGHT
 
 data : list[dict] = []
@@ -44,6 +45,9 @@ for i in range(IMAGE_HEIGHT):
                 "eq": shifted_sol.is_equilibrium_solution(),
                 "ham": shifted_sol.get_hamiltonian() - shifted_sol.get_total_momentum()**2
             })
+
+if not os.path.exists("region_data"):
+    os.makedirs("region_data")
 
 filename = f"region_data/{hash(solution)}.csv"
 
