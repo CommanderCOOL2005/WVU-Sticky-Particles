@@ -73,4 +73,4 @@ The resulting graph is:
 ![Graph of example 4](/example_figures/fig_4.png)
 
 # Dependencies
-This code uses matplotlib version 3.10.3
+The main sticky particle solver uses matplotlib version 3.10.3. region_plotter.py used  pygame version 2.6.1.
